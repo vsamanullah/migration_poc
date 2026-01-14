@@ -1,0 +1,35 @@
+{
+  "environments": {
+    "source": {
+      "server": "10.134.77.68,1433",
+      "database": "BookService-Master",
+      "username": "testuser",
+      "password": "TestDb@26#!",
+      "driver": "ODBC Driver 18 for SQL Server",
+      "encrypt": true,
+      "trust_certificate": true,
+      "description": "Source Database (Same as Target - Temporary)"
+    },
+    "target": {
+      "server": "10.134.77.68,1433",
+      "database": "BookService-Master",
+      "username": "testuser",
+      "password": "TestDb@26#!",
+      "driver": "ODBC Driver 18 for SQL Server",
+      "encrypt": true,
+      "trust_certificate": true,
+      "description": "Target Database (Post-Migration)"
+    },
+    "local": {
+      "server": "(localdb)\\MSSQLLocalDB",
+      "database": "BookServiceContext",
+      "username": null,
+      "password": null,
+      "driver": "ODBC Driver 18 for SQL Server",
+      "encrypt": false,
+      "trust_certificate": true,
+      "trusted_connection": true,
+      "description": "Local Development Database (Windows Auth)"
+    }
+  }
+}
