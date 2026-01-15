@@ -167,6 +167,45 @@ test.describe('Book Store Application Tests', () => {
     expect(book.Id).toBe(targetId);
   });
 
+  test('TC-API-004: Update an existing book', async ({ request }) => {
+    // Create a book first
+    const authorRes = await request.get('/api/Authors');
+    const authors = await authorRes.json();
+    const authorId = authors[0]?.Id;
+    if (!authorId) test.skip(true, 'No authors found');
+
+    // Create book
+    const createRes = await request.post('/api/Books', {
+        data: { Title: 'Original Title', Year: 2023, Price: 20, Genre: 'Original', AuthorId: authorId }
+    });
+    expect(createRes.status()).toBe(201);
+    const createdBook = await createRes.json();
+
+    // Update the book
+    const updatedData = {
+        Id: createdBook.Id,
+        Title: 'Updated Title',
+        Year: 2024,
+        Price: 30,
+        Genre: 'Updated',
+        AuthorId: authorId
+    };
+    
+    const updateRes = await request.put(`/api/Books/${createdBook.Id}`, { data: updatedData });
+    
+    if (updateRes.status() === 405) {
+        test.skip(true, 'PUT method not allowed by server configuration');
+    } else {
+        expect([200, 204]).toContain(updateRes.status());
+        
+        // Verify the update
+        const getRes = await request.get(`/api/Books/${createdBook.Id}`);
+        const updatedBook = await getRes.json();
+        expect(updatedBook.Title).toBe('Updated Title');
+        expect(updatedBook.Price).toBe(30);
+    }
+  });
+
   test('TC-API-005: Delete a book', async ({ request }) => {
     // Create one specifically to delete
     const authorRes = await request.get('/api/Authors');
@@ -211,8 +250,58 @@ test.describe('Book Store Application Tests', () => {
     const body = await response.json();
     expect(body.Name).toBe(newAuthor.Name);
   });
+
+  test('TC-API-009: Update an existing author', async ({ request }) => {
+    // Create an author first
+    const createRes = await request.post('/api/Authors', {
+        data: { Name: 'Author to Update' }
+    });
+    expect(createRes.status()).toBe(201);
+    const createdAuthor = await createRes.json();
+
+    // Update the author
+    const updatedData = {
+        Id: createdAuthor.Id,
+        Name: 'Updated Author Name'
+    };
+    
+    const updateRes = await request.put(`/api/Authors/${createdAuthor.Id}`, { data: updatedData });
+    
+    if (updateRes.status() === 405) {
+        test.skip(true, 'PUT method not allowed by server configuration');
+    } else {
+        expect([200, 204]).toContain(updateRes.status());
+        
+        // Verify the update
+        const getRes = await request.get(`/api/Authors/${createdAuthor.Id}`);
+        const updatedAuthor = await getRes.json();
+        expect(updatedAuthor.Name).toBe('Updated Author Name');
+    }
+  });
+
+  test('TC-API-010: Delete an author', async ({ request }) => {
+    // Create an author specifically to delete
+    const createRes = await request.post('/api/Authors', {
+        data: { Name: 'Author to Delete' }
+    });
+    expect(createRes.status()).toBe(201);
+    const createdAuthor = await createRes.json();
+
+    // Delete
+    const deleteRes = await request.delete(`/api/Authors/${createdAuthor.Id}`);
+    
+    if (deleteRes.status() === 405) {
+        test.skip(true, 'DELETE method not allowed by server configuration');
+    } else {
+        expect([200, 204]).toContain(deleteRes.status());
+        
+        // Verify gone
+        const getRes = await request.get(`/api/Authors/${createdAuthor.Id}`);
+        expect(getRes.status()).toBe(404);
+    }
+  });
   
-  test('TC-API-009: Get customer by country', async ({ request }) => {
+  test('TC-API-011: Get customer by country', async ({ request }) => {
       // Assuming 'USA' might exist or return empty list 200
       const response = await request.get('/Customers/GetCustomerByCountry?country=USA');
       expect(response.status()).toBe(200);

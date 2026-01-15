@@ -1,7 +1,7 @@
 """
 Check database schema structure
 """
-import pyodbc
+import psycopg2
 import json
 import argparse
 from pathlib import Path
@@ -12,22 +12,14 @@ def load_config(config_path="../db_config.json", env_name="target"):
         config = json.load(f)
     return config['environments'][env_name]
 
-def build_connection_string(env_config):
-    """Build ODBC connection string from environment config"""
-    # Server string already includes port in format "server,port"
-    server_str = env_config.get('server', '')
-    
-    # Use the driver specified in config, fallback to SQL Server
-    driver = env_config.get('driver', 'SQL Server')
-    
-    return (
-        f"DRIVER={{{driver}}};"
-        f"SERVER={server_str};"
-        f"DATABASE={env_config['database']};"
-        f"UID={env_config.get('username', '')};"
-        f"PWD={env_config.get('password', '')};"
-        f"Encrypt=yes;"
-        f"TrustServerCertificate=yes"
+def get_connection(env_config):
+    """Create PostgreSQL connection from environment config"""
+    return psycopg2.connect(
+        host=env_config['host'],
+        port=env_config['port'],
+        database=env_config['database'],
+        user=env_config['username'],
+        password=env_config['password']
     )
 
 def check_schema(env_name="target", config_path="../db_config.json"):
@@ -35,27 +27,26 @@ def check_schema(env_name="target", config_path="../db_config.json"):
     try:
         # Load configuration
         env_config = load_config(config_path, env_name)
-        connection_string = build_connection_string(env_config)
         
         print(f"\n{'='*70}")
         print(f"Checking Schema - Environment: {env_name.upper()}")
         print(f"Database: {env_config['database']}")
-        print(f"Server: {env_config.get('server', 'N/A')}")
+        print(f"Host: {env_config['host']}")
         print(f"{'='*70}\n")
         
-        conn = pyodbc.connect(connection_string)
+        conn = get_connection(env_config)
         cursor = conn.cursor()
 
-        tables = ['Authors', 'Books', 'Genres', 'Customers', 'Rentals', 'Stocks']
+        tables = ['types', 'specialties', 'owners', 'vets', 'vet_specialties', 'pets', 'visits']
 
         for table_name in tables:
             print(f"\n=== {table_name} Table Structure ===")
-            cursor.execute(f"""
-                SELECT COLUMN_NAME, DATA_TYPE, IS_NULLABLE, CHARACTER_MAXIMUM_LENGTH
-                FROM INFORMATION_SCHEMA.COLUMNS
-                WHERE TABLE_NAME = '{table_name}'
-                ORDER BY ORDINAL_POSITION
-            """)
+            cursor.execute("""
+                SELECT column_name, data_type, is_nullable, character_maximum_length
+                FROM information_schema.columns
+                WHERE table_schema = 'petclinic' AND table_name = %s
+                ORDER BY ordinal_position
+            """, (table_name,))
             
             rows = cursor.fetchall()
             if rows:

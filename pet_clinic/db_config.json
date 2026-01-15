@@ -2,12 +2,12 @@
   "environments": {
     "source": {
       "db_type": "postgresql",
-      "host": "10.130.73.5",
+      "host": "10.106.54.5",
       "port": 5432,
       "database": "petclinic",
       "username": "petclinic",
       "password": "petclinic",
-      "instance_name": "prj-unicr-dev-svc-mig-demo:us-central1:pg-9",
+      "instance_name": "prj-src-spc-prd-01:europe-west8:ptcprdpgsql96",
       "description": "Source Database - PetClinic PostgreSQL (GCP Cloud SQL)"
     },
     "target": {

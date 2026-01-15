@@ -1,7 +1,7 @@
 {
   "environments": {
     "source": {
-      "server": "10.134.77.68,1433",
+      "server": "10.8.196.7,1433",
       "database": "BookService-Master",
       "username": "testuser",
       "password": "TestDb@26#!",

@@ -34,8 +34,8 @@ book_store/
 │   ├── README.md                  # Functional tests documentation
 │   ├── testcases/                 # Test case specifications
 │   └── tests/                     # Test implementations
-├── peformance_tests/              # JMeter and Python performance testing
-│   ├── *.jmx                      # JMeter test plans (10 files)
+├── performance_tests/             # JMeter and Python performance testing
+│   ├── *.jmx                      # JMeter test plans (8 files)
 │   ├── *.csv                      # Test data files
 │   ├── *.py                       # Python testing scripts
 │   ├── README.md                  # Performance testing guide
@@ -84,12 +84,12 @@ npx playwright test --headed          # Visible browser mode
 ---
 
 ### Performance Tests  
-**Location:** `peformance_tests/`  
+**Location:** `performance_tests/`  
 **Technology:** JMeter, Python, Apache JMeter  
 **Purpose:** Load testing, stress testing, and performance monitoring
 
 **Key Features:**
-- 10 pre-built JMeter test plans (Authors + Books CRUD)
+- 8 pre-built JMeter test plans (Authors + Books CRUD)
 - Python-based quick testing scripts
 - API discovery and documentation
 - System resource monitoring during tests
@@ -98,16 +98,16 @@ npx playwright test --headed          # Visible browser mode
 **Quick Commands:**
 ```bash
 # Quick API endpoint testing
-python peformance_tests/test_endpoints.py --env target
+python performance_tests/test_endpoints.py --env target
 
 # JMeter performance test with monitoring
-python peformance_tests/run_with_profiling.py 01_Authors_GET_All.jmx --env target
+python performance_tests/run_with_profiling.py 01_Authors_GET_All.jmx --env target
 
 # API discovery
-python peformance_tests/discover_apis.py --env target
+python performance_tests/discover_apis.py --env target
 ```
 
-📖 **[Complete Performance Testing Guide →](peformance_tests/README.md)**
+📖 **[Complete Performance Testing Guide →](performance_tests/README.md)**
 
 ---
 
@@ -238,10 +238,10 @@ npm install
 ### 1. Pre-Deployment API Validation
 ```bash
 # Quick validation of all API endpoints
-python peformance_tests/test_endpoints.py --env target
+python performance_tests/test_endpoints.py --env target
 
 # Comprehensive endpoint testing with load
-python peformance_tests/comprehensive_endpoint_test.py --env target
+python performance_tests/comprehensive_endpoint_test.py --env target
 ```
 
 ### 2. Database Migration Testing
@@ -261,7 +261,7 @@ python data_testing/data_integrity_tests/verify_migration.py --env target
 cd functional_tests && npx playwright test
 
 # 2. Performance tests  
-python peformance_tests/run_with_profiling.py 01_Authors_GET_All.jmx --env target
+python performance_tests/run_with_profiling.py 01_Authors_GET_All.jmx --env target
 
 # 3. Data integrity verification
 python data_testing/data_integrity_tests/verify_migration.py --env target
@@ -270,8 +270,8 @@ python data_testing/data_integrity_tests/verify_migration.py --env target
 ### 4. Environment Comparison
 ```bash
 # Compare API responses between environments
-python peformance_tests/test_endpoints.py --env source
-python peformance_tests/test_endpoints.py --env target
+python performance_tests/test_endpoints.py --env source
+python performance_tests/test_endpoints.py --env target
 
 # Compare database schemas
 python test_data/check_schema.py --env source  
@@ -289,9 +289,9 @@ python test_data/check_schema.py --env target
 - **Trace Files:** For detailed step-by-step debugging
 
 ### Performance Test Reports  
-- **JMeter HTML Reports:** `peformance_tests/results/*/index.html`
-- **System Metrics:** `peformance_tests/results/profiling/graphs/`
-- **CSV Results:** `peformance_tests/results/*.jtl`
+- **JMeter HTML Reports:** `performance_tests/results/*/index.html`
+- **System Metrics:** `performance_tests/results/profiling/graphs/`
+- **CSV Results:** `performance_tests/results/*.jtl`
 
 ### Data Testing Reports
 - **Migration Reports:** `verification_report_YYYYMMDD_HHMMSS.json`
@@ -328,19 +328,19 @@ npx playwright install --force
 ### Getting Help
 
 1. **Check Module Documentation:**
-   - [Functional Tests README](functional_tests/readme.md)
-   - [Performance Tests README](peformance_tests/README.md)  
+   - [Functional Tests README](functional_tests/README.md)
+   - [Performance Tests README](performance_tests/README.md)  
    - [Data Integrity README](data_testing/data_integrity_tests/README.md)
    - [Database Performance README](data_testing/database_performance_tests/README.md)
 
 2. **Check Test Cases:**
-   - [Performance Test Cases](peformance_tests/test_cases.md)
+   - [Performance Test Cases](performance_tests/test_cases.md)
    - [Data Integrity Test Cases](data_testing/data_integrity_tests/test_cases.md)
    - [Database Performance Test Cases](data_testing/database_performance_tests/test_cases.md)
 
 3. **Review Setup Guides:**
-   - [Windows Setup](peformance_tests/WINDOWS_SETUP.md)
-   - [Linux Setup](peformance_tests/LINUX_SETUP.md)
+   - [Windows Setup](performance_tests/WINDOWS_SETUP.md)
+   - [Linux Setup](performance_tests/LINUX_SETUP.md)
    - [JMeter Setup](data_testing/database_performance_tests/JMETER_SETUP.md)
 
 ---
@@ -356,7 +356,7 @@ npx playwright install --force
 
 ### Adding New Tests
 1. **Functional Tests:** Add to `functional_tests/tests/` with corresponding documentation in `functional_tests/testcases/`
-2. **Performance Tests:** Add JMeter files to `peformance_tests/` and update `peformance_tests/README.md`
+2. **Performance Tests:** Add JMeter files to `performance_tests/` and update `performance_tests/README.md`
 3. **Data Tests:** Add to appropriate subfolder in `data_testing/` with documentation updates
 
 ---

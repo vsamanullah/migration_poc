@@ -189,10 +189,16 @@ class TestDataPopulator:
                     count = cursor.fetchone()[0]
                     
                     if count > 0:
-                        # Delete all records
-                        cursor.execute(f"DELETE FROM {full_table}")
-                        conn.commit()
-                        logger.info(f"  Deleted {count:>5} rows from {schema}.{table_name}")
+                        # Try TRUNCATE first (resets identity automatically)
+                        try:
+                            cursor.execute(f"TRUNCATE TABLE {full_table}")
+                            conn.commit()
+                            logger.info(f"  Truncated {count:>5} rows from {schema}.{table_name} (identity reset)")
+                        except Exception as truncate_err:
+                            # If TRUNCATE fails (due to FK), fall back to DELETE
+                            cursor.execute(f"DELETE FROM {full_table}")
+                            conn.commit()
+                            logger.info(f"  Deleted {count:>5} rows from {schema}.{table_name}")
                     else:
                         logger.info(f"  Skipped {schema}.{table_name} (already empty)")
                         
@@ -208,8 +214,31 @@ class TestDataPopulator:
                     logger.warning(f"  Could not re-enable constraints on {schema}.{table_name}: {e}")
             conn.commit()
             
+            # Reset identity seeds to 1 for all tables with identity columns
+            logger.info("\n⚙  Resetting identity columns to start from 1...")
+            for schema, table_name in tables:
+                try:
+                    # Check if table has identity column
+                    cursor.execute(f"""
+                        SELECT COUNT(*) 
+                        FROM sys.identity_columns ic
+                        INNER JOIN sys.tables t ON ic.object_id = t.object_id
+                        INNER JOIN sys.schemas s ON t.schema_id = s.schema_id
+                        WHERE s.name = ? AND t.name = ?
+                    """, schema, table_name)
+                    
+                    has_identity = cursor.fetchone()[0] > 0
+                    
+                    if has_identity:
+                        # Reset identity to 1
+                        cursor.execute(f"DBCC CHECKIDENT ('[{schema}].[{table_name}]', RESEED, 0)")
+                        logger.info(f"  Reset identity for {schema}.{table_name} to 1")
+                except Exception as e:
+                    logger.warning(f"  Could not reset identity for {schema}.{table_name}: {e}")
+            conn.commit()
+            
             logger.info("="*70)
-            logger.info(" All records deleted successfully")
+            logger.info(" All records deleted and identity columns reset successfully")
             logger.info("="*70)
             
         except Exception as e:
@@ -248,6 +277,15 @@ class TestDataPopulator:
         
         author_ids = []
         
+        # Try to use IDENTITY_INSERT to control IDs
+        try:
+            cursor.execute("SET IDENTITY_INSERT Authors ON")
+            use_identity_insert = True
+            logger.info(f"   Using IDENTITY_INSERT to create sequential IDs starting from 1")
+        except Exception:
+            use_identity_insert = False
+            logger.info(f"   Using auto-increment IDs (no IDENTITY_INSERT permission)")
+        
         for i in range(count):
             # Create unique timestamp-based identifier
             timestamp_str = (self.timestamp + timedelta(seconds=i)).strftime('%Y%m%d%H%M%S')
@@ -261,15 +299,25 @@ class TestDataPopulator:
             author_name = f"{first_name} {last_name} {unique_suffix}"
             
             try:
-                cursor.execute("""
-                    INSERT INTO Authors (Name)
-                    VALUES (?)
-                """, author_name)
-                
-                # Get the inserted ID
-                cursor.execute("SELECT @@IDENTITY")
-                author_id = int(cursor.fetchone()[0])
-                author_ids.append(author_id)
+                if use_identity_insert:
+                    # Insert with explicit ID starting from 1
+                    author_id = i + 1
+                    cursor.execute("""
+                        INSERT INTO Authors (Id, Name)
+                        VALUES (?, ?)
+                    """, author_id, author_name)
+                    author_ids.append(author_id)
+                else:
+                    # Let SQL Server assign ID
+                    cursor.execute("""
+                        INSERT INTO Authors (Name)
+                        VALUES (?)
+                    """, author_name)
+                    
+                    # Get the inserted ID
+                    cursor.execute("SELECT @@IDENTITY")
+                    author_id = int(cursor.fetchone()[0])
+                    author_ids.append(author_id)
                 
                 if (i + 1) % 10 == 0 or i == count - 1:
                     logger.info(f"   Created {i + 1}/{count} authors...")
@@ -278,8 +326,16 @@ class TestDataPopulator:
                 logger.error(f"   Error creating author {i+1}: {e}")
                 raise
         
+        if use_identity_insert:
+            try:
+                cursor.execute("SET IDENTITY_INSERT Authors OFF")
+            except Exception:
+                pass
+        
         conn.commit()
         logger.info(f"✓ Created {len(author_ids)} authors successfully")
+        if author_ids:
+            logger.info(f"   ID range: {min(author_ids)} to {max(author_ids)}")
         
         return author_ids
     
@@ -322,6 +378,15 @@ class TestDataPopulator:
         
         book_ids = []
         
+        # Try to use IDENTITY_INSERT to control IDs
+        try:
+            cursor.execute("SET IDENTITY_INSERT Books ON")
+            use_identity_insert = True
+            logger.info(f"   Using IDENTITY_INSERT to create sequential IDs starting from 1")
+        except Exception:
+            use_identity_insert = False
+            logger.info(f"   Using auto-increment IDs (no IDENTITY_INSERT permission)")
+        
         for i in range(count):
             # Create unique timestamp-based identifier
             timestamp_str = (self.timestamp + timedelta(seconds=i)).strftime('%Y%m%d%H%M%S')
@@ -338,15 +403,25 @@ class TestDataPopulator:
             genre = random.choice(['Fiction', 'Non-Fiction', 'Science', 'Technology', 'History', 'Biography', 'Mystery', 'Thriller'])
             
             try:
-                cursor.execute("""
-                    INSERT INTO Books (Title, Year, Price, Genre, AuthorId)
-                    VALUES (?, ?, ?, ?, ?)
-                """, title, year, price, genre, author_id)
-                
-                # Get the inserted ID
-                cursor.execute("SELECT @@IDENTITY")
-                book_id = int(cursor.fetchone()[0])
-                book_ids.append(book_id)
+                if use_identity_insert:
+                    # Insert with explicit ID starting from 1
+                    book_id = i + 1
+                    cursor.execute("""
+                        INSERT INTO Books (Id, Title, Year, Price, Genre, AuthorId)
+                        VALUES (?, ?, ?, ?, ?, ?)
+                    """, book_id, title, year, price, genre, author_id)
+                    book_ids.append(book_id)
+                else:
+                    # Let SQL Server assign ID
+                    cursor.execute("""
+                        INSERT INTO Books (Title, Year, Price, Genre, AuthorId)
+                        VALUES (?, ?, ?, ?, ?)
+                    """, title, year, price, genre, author_id)
+                    
+                    # Get the inserted ID
+                    cursor.execute("SELECT @@IDENTITY")
+                    book_id = int(cursor.fetchone()[0])
+                    book_ids.append(book_id)
                 
                 if (i + 1) % 10 == 0 or i == count - 1:
                     logger.info(f"   Created {i + 1}/{count} books...")
@@ -355,8 +430,16 @@ class TestDataPopulator:
                 logger.error(f"   Error creating book {i+1}: {e}")
                 raise
         
+        if use_identity_insert:
+            try:
+                cursor.execute("SET IDENTITY_INSERT Books OFF")
+            except Exception:
+                pass
+        
         conn.commit()
         logger.info(f"✓ Created {len(book_ids)} books successfully")
+        if book_ids:
+            logger.info(f"   ID range: {min(book_ids)} to {max(book_ids)}")
         
         return book_ids
     
@@ -587,16 +670,16 @@ def main():
         epilog="""
 Examples:
   # Using environment from config file:
-  python populate_test_data.py 25 --env source
+  python populate_test_data.py --count 25 --env source
   
   # Using custom config file:
-  python populate_test_data.py 50 --env target --config my_config.json
+  python populate_test_data.py --count 50 --env target --config my_config.json
   
-  # Using direct connection string:
-  python populate_test_data.py 100 --conn "DRIVER={...};SERVER=...;..."
+  # Using default settings (target environment, 10 records):
+  python populate_test_data.py
   
-  # Default (without config):
-  python populate_test_data.py 25
+  # Delete all records without populating:
+  python populate_test_data.py --count 0
         """
     )
     

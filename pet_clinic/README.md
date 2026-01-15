@@ -34,7 +34,7 @@ pet_clinic/
 │   ├── README.md                  # Functional tests documentation
 │   ├── testcases/                 # Test case specifications
 │   └── tests/                     # Test implementations
-├── peformance_tests/              # JMeter and Python performance testing
+├── performance_tests/             # JMeter and Python performance testing
 │   ├── *.jmx                      # JMeter test plans (6 business scenarios)
 │   ├── *.csv                      # Test data files
 │   ├── *.py                       # Python testing scripts
@@ -87,7 +87,7 @@ npx playwright test --headed          # Visible browser mode
 ---
 
 ### Performance Tests  
-**Location:** `peformance_tests/`  
+**Location:** `performance_tests/`  
 **Technology:** JMeter, Python, Apache JMeter  
 **Purpose:** Load testing, stress testing, and performance monitoring
 
@@ -109,16 +109,16 @@ npx playwright test --headed          # Visible browser mode
 **Quick Commands:**
 ```bash
 # Quick API endpoint testing
-python peformance_tests/test_endpoints.py
+python performance_tests/test_endpoints.py
 
 # JMeter performance test with monitoring
-python peformance_tests/run_with_profiling.py 01_New_Client_Registration.jmx
+python performance_tests/run_with_profiling.py 01_New_Client_Registration.jmx
 
 # Test specific workflow
-python peformance_tests/test_visit_flow.py
+python performance_tests/test_visit_flow.py
 ```
 
-📖 **[Complete Performance Testing Guide →](peformance_tests/README.md)**
+📖 **[Complete Performance Testing Guide →](performance_tests/README.md)**
 
 ---
 
@@ -246,11 +246,11 @@ npm install
 ### 1. Pre-Deployment Validation
 ```bash
 # Quick validation of all endpoints
-python peformance_tests/test_endpoints.py
+python performance_tests/test_endpoints.py
 
 # Test critical business scenarios
-python peformance_tests/test_visit_flow.py
-python peformance_tests/test_extraction_flow.py
+python performance_tests/test_visit_flow.py
+python performance_tests/test_extraction_flow.py
 ```
 
 ### 2. Database Migration Testing
@@ -270,7 +270,7 @@ python data_testing/data_integrity_tests/verify_migration.py --env target
 cd functional_tests && npx playwright test
 
 # 2. Performance tests  
-python peformance_tests/run_with_profiling.py 01_New_Client_Registration.jmx
+python performance_tests/run_with_profiling.py 01_New_Client_Registration.jmx
 
 # 3. Data integrity verification
 python data_testing/data_integrity_tests/verify_migration.py --env target
@@ -298,9 +298,9 @@ python data_testing/query_db_content.py --env target
 - **Trace Files:** For detailed step-by-step debugging
 
 ### Performance Test Reports  
-- **JMeter HTML Reports:** `peformance_tests/results/*/index.html`
-- **System Metrics:** `peformance_tests/results/profiling/graphs/`
-- **CSV Results:** `peformance_tests/results/*.jtl`
+- **JMeter HTML Reports:** `performance_tests/results/*/index.html`
+- **System Metrics:** `performance_tests/results/profiling/graphs/`
+- **CSV Results:** `performance_tests/results/*.jtl`
 
 ### Data Testing Reports
 - **Migration Reports:** `verification_report_YYYYMMDD_HHMMSS.json`
@@ -339,14 +339,14 @@ npx playwright install --force
 
 1. **Check Module Documentation:**
    - [Functional Tests README](functional_tests/README.md)
-   - [Performance Tests README](peformance_tests/README.md)  
+   - [Performance Tests README](performance_tests/README.md)  
    - [Data Integrity README](data_testing/data_integrity_tests/README.md)
    - [Database Performance README](data_testing/database_performance_tests/README.md)
 
 2. **Check Test Documentation:**
-   - [Performance Test Cases](peformance_tests/test_cases.md)
-   - [Critical Business Scenarios](peformance_tests/CRITICAL_BUSINESS_SCENARIOS.md)
-   - [Performance Analysis](peformance_tests/PERFORMACE_TEST_ANALYSIS.md)
+   - [Performance Test Cases](performance_tests/test_cases.md)
+   - [Critical Business Scenarios](performance_tests/CRITICAL_BUSINESS_SCENARIOS.md)
+   - [Performance Analysis](performance_tests/PERFORMACE_TEST_ANALYSIS.md)
    - [Functional Test Cases](functional_tests/testcases/README.md)
 
 ---
@@ -362,7 +362,7 @@ npx playwright install --force
 
 ### Adding New Tests
 1. **Functional Tests:** Add to `functional_tests/tests/` with corresponding documentation in `functional_tests/testcases/`
-2. **Performance Tests:** Add JMeter files to `peformance_tests/` and update `peformance_tests/README.md`
+2. **Performance Tests:** Add JMeter files to `performance_tests/` and update `performance_tests/README.md`
 3. **Data Tests:** Add to appropriate subfolder in `data_testing/` with documentation updates
 
 ---

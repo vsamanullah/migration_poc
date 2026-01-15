@@ -470,8 +470,10 @@ def run_jmeter_test(env_config, results_dir, timeout=600):
     
     try:
         # Start JMeter process with real-time output
+        # On Windows, need shell=True to execute .bat files
         process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, 
-                                   text=True, bufsize=1, universal_newlines=True)
+                                   text=True, bufsize=1, universal_newlines=True,
+                                   shell=(os.name == 'nt'))
         
         print_color("  JMeter Execution Progress:", Colors.CYAN)
         print_color("  " + "="*68, Colors.CYAN)
@@ -771,6 +773,9 @@ Examples:
     
     args = parser.parse_args()
     
+    # Track overall start time
+    overall_start = datetime.now()
+    
     # Load from configuration file
     connection_string, database_name = get_connection_from_config(
         args.environment, 
@@ -837,9 +842,17 @@ Examples:
     # Consolidate results
     consolidate_results(jtl_file, report_dir, perf_file)
     
+    # Calculate and display execution time
+    overall_end = datetime.now()
+    duration = (overall_end - overall_start).total_seconds()
+    
     print_color("\n" + "=" * 70, Colors.GREEN)
     print_color("JMETER TEST COMPLETED SUCCESSFULLY!", Colors.GREEN)
     print_color("=" * 70, Colors.GREEN)
+    print()
+    print(f"Start Time: {overall_start.strftime('%a %b %d %I:%M:%S %p')}")
+    print(f"End Time: {overall_end.strftime('%a %b %d %I:%M:%S %p')}")
+    print(f"Total Duration: {duration:.2f}s ({duration/60:.2f} minutes)")
     print()
     print(f"Results directory: {JMETER_RESULTS_DIR}")
     print(f"Open report: {report_dir}/index.html")

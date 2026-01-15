@@ -1,8 +1,8 @@
 # Test Cases: Book Store Application
 
-**Application URL:** `https://10.134.77.67/`  
-**API Documentation:** `https://10.134.77.67/Help`
-**Generated Date:** 2026-01-12
+**Application URL:** `https://10.8.196.6`  
+**API Documentation:** `https://10.8.196.6/Help`
+
 
 ---
 
@@ -27,12 +27,14 @@
 | **TC-API-001** | **Books** | Get all books | API | High | 1. Send `GET /api/Books` request. | Status 200 OK; Response body contains list of books JSON. |
 | **TC-API-002** | **Books** | Create a new book | API | High | 1. Send `POST /api/Books` with JSON payload (Title, Year, Price, Genre, AuthorId). | Status 201 Created; Response contains created book details. |
 | **TC-API-003** | **Books** | Get book by ID | API | Medium | 1. Send `GET /api/Books/{id}` for existing ID. | Status 200 OK; Response matches requested book ID. |
-| **TC-API-004** | **Books** | Update an existing book | API | Medium | 1. Send `PUT /api/Books/{id}` with updated JSON payload. | Status 200 OK or 204 No Content; Update reflected in subsequent GET. |
-| **TC-API-005** | **Books** | Delete a book | API | Medium | 1. Send `DELETE /api/Books/{id}`. | Status 200 OK or 204 No Content; Book no longer retrievable. |
+| **TC-API-004** | **Books** | Update an existing book | API | Medium | 1. Create a book via POST.<br>2. Send `PUT /api/Books/{id}` with updated JSON payload (modified Title, Price). | Status 200 OK or 204 No Content; Update reflected in subsequent GET. |
+| **TC-API-005** | **Books** | Delete a book | API | Medium | 1. Create a book via POST.<br>2. Send `DELETE /api/Books/{id}`. | Status 200 OK or 204 No Content; Book no longer retrievable (404). |
 | **TC-API-006** | **Books** | Get non-existent book | API | Low | 1. Send `GET /api/Books/99999`. | Status 404 Not Found. |
 | **TC-API-007** | **Authors** | Get all authors | API | High | 1. Send `GET /api/Authors`. | Status 200 OK; Response contains list of authors. |
 | **TC-API-008** | **Authors** | Create a new author | API | High | 1. Send `POST /api/Authors` with payload `{"Name": "Test Author"}`. | Status 201 Created. |
-| **TC-API-009** | **Customers** | Get customer by country | API | Medium | 1. Send `GET /Customers/GetCustomerByCountry?country=USA`. | Status 200 OK; Returns customers from specified country. |
+| **TC-API-009** | **Authors** | Update an existing author | API | Medium | 1. Create an author via POST.<br>2. Send `PUT /api/Authors/{id}` with updated name. | Status 200 OK or 204 No Content; Update reflected in subsequent GET. |
+| **TC-API-010** | **Authors** | Delete an author | API | Medium | 1. Create an author via POST.<br>2. Send `DELETE /api/Authors/{id}`. | Status 200 OK or 204 No Content; Author no longer retrievable (404). |
+| **TC-API-011** | **Customers** | Get customer by country | API | Medium | 1. Send `GET /Customers/GetCustomerByCountry?country=USA`. | Status 200 OK; Returns customers from specified country. |
 
 ---
 

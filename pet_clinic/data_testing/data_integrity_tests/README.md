@@ -15,14 +15,12 @@ The **PetClinicDataIntegrity** module provides comprehensive automated testing t
 
 ### Core Scripts
 
-| Script | Purpose | Key Features |
-|--------|---------|--------------|
-| **check_schema.py** | Quick schema inspection | Display table structures, columns, data types, constraints (PK, FK, UNIQUE), and auto-increment sequences |
-| **create_snapshot.py** | Database snapshot creation | Capture complete database state to JSON file with metadata, schema, and all data |
-| **populate_test_data.py** | Test data population | Clear database, load baseline from snapshot, create additional test records with relationships |
-| **verify_migration.py** | Post-migration verification | Compare current state against snapshot baseline and generate detailed report |
-
-### Documentation
+| Script | Purpose | Location | Key Features |
+|--------|---------|----------|--------------|  
+| **check_schema.py** | Quick schema inspection | ../../test_data/ | Display table structures, columns, data types, constraints (PK, FK, UNIQUE), and auto-increment sequences |
+| **create_baseline.py** | Database baseline creation | ./ | Capture complete database state to JSON file with metadata, schema, and all data |
+| **populate_test_data.py** | Test data population | ../../test_data/ | Clear database, load data from snapshot, create test records with relationships |
+| **verify_migration.py** | Post-migration verification | ./ | Compare current state against baseline and generate detailed report |
 
 - **README.md** (this file): Setup guide and usage instructions
 - **TEST_CASES.md**: Comprehensive test case documentation with pass/fail criteria
@@ -96,16 +94,16 @@ The module uses `../../db_config.json` for database connections. Ensure this fil
 
 ```bash
 # Check source environment (default)
-python check_schema.py --env source
+python ../../test_data/check_schema.py --env source
 
 # Check target environment
-python check_schema.py --env target
+python ../../test_data/check_schema.py --env target
 
 # Check local environment
-python check_schema.py --env local
+python ../../test_data/check_schema.py --env local
 
 # Using custom config file
-python check_schema.py --env target --config /path/to/db_config.json
+python ../../test_data/check_schema.py --env target --config /path/to/db_config.json
 ```
 
 **Output Example:**
@@ -142,25 +140,22 @@ Server: 10.130.73.5:5432
   FOREIGN KEY: pets_type_id_fkey (type_id) → types(id)
 ```
 
-### 2. Create Database Snapshot
+### 2. Create Database Baseline
 
-**Purpose**: Capture complete database state to JSON file for baseline comparison or restore
+**Purpose**: Capture complete database state to JSON file for baseline comparison
 
 ```bash
-# Create snapshot for source environment (default)
-python create_snapshot.py --env source
+# Create baseline for source environment (default)
+python create_baseline.py --env source
 
-# Create snapshot for target environment
-python create_snapshot.py --env target
+# Create baseline for target environment
+python create_baseline.py --env target
 
-# Create snapshot for local environment
-python create_snapshot.py --env local
-
-# Specify custom output filename
-python create_snapshot.py --env source --output my_snapshot.json
+# Create baseline for local environment
+python create_baseline.py --env local
 
 # Using custom config file
-python create_snapshot.py --env source --config /path/to/db_config.json
+python create_baseline.py --env source --config /path/to/db_config.json
 ```
 
 **Generated Files:**
@@ -192,25 +187,22 @@ python create_snapshot.py --env source --config /path/to/db_config.json
 }
 ```
 
-### 3. Populate Test Data (with Snapshot Restore)
+### 3. Populate Test Data
 
-**Purpose**: Clear database, load baseline from snapshot, and optionally create additional test records
+**Purpose**: Clear database and create test records with relationships
 
 ```bash
-# Load snapshot only (no additional records) - uses default snapshot file
-python populate_test_data.py
+# Populate with default count (10 records per table)
+python ../../test_data/populate_test_data.py --env target
 
-# Load snapshot and create 50 additional owners (with pets, vets, and visits)
-python populate_test_data.py --additional 50
+# Populate with specific count
+python ../../test_data/populate_test_data.py --env target --count 50
 
-# Use specific snapshot file
-python populate_test_data.py --snapshot ../../petclinic_snapshot_custom.json --additional 20
-
-# Use different environment
-python populate_test_data.py --env target --additional 20
+# Clear database only (no new data)
+python ../../test_data/populate_test_data.py --env target --count 0
 
 # Using custom config file
-python populate_test_data.py --env local --config /path/to/db_config.json --additional 30
+python ../../test_data/populate_test_data.py --env local --config /path/to/db_config.json --count 30
 ```
 
 **Data Population Workflow:**
@@ -293,27 +285,27 @@ VERIFICATION SUMMARY
 ### Workflow 1: Initial Database Setup
 
 ```bash
-# Step 1: Create initial snapshot of source database
-python create_snapshot.py --env source
+# Step 1: Create initial baseline of source database
+python create_baseline.py --env source
 
-# Step 2: Populate database with baseline + test data
-python populate_test_data.py --env source --additional 50
+# Step 2: Populate database with test data
+python ../../test_data/populate_test_data.py --env source --count 50
 
-# Step 3: Verify population succeeded
-python verify_migration.py --env source --snapshot ../../petclinic_snapshot_source_*.json
+# Step 3: Verify population succeeded  
+python verify_migration.py --env source --baseline ../../baseline_source_*.json
 ```
 
 ### Workflow 2: Database Migration Testing
 
 ```bash
-# Step 1: Create source baseline snapshot
-python create_snapshot.py --env source
+# Step 1: Create source baseline
+python create_baseline.py --env source
 
 # Step 2: Perform your database migration
 # (External migration process - e.g., pg_dump/pg_restore, custom ETL, etc.)
 
 # Step 3: Verify target matches source
-python verify_migration.py --env target --snapshot ../../petclinic_snapshot_source_*.json
+python verify_migration.py --env target --baseline ../../baseline_source_*.json
 
 # Step 4: Review results
 # Check verification log for any discrepancies
@@ -322,21 +314,21 @@ python verify_migration.py --env target --snapshot ../../petclinic_snapshot_sour
 ### Workflow 3: Reset Database to Known State
 
 ```bash
-# Single command to clear and reload baseline data
-python populate_test_data.py --env local
+# Single command to clear and reload test data
+python ../../test_data/populate_test_data.py --env local --count 10
 
-# Or with additional test records
-python populate_test_data.py --env local --additional 100
+# Or with more test records
+python ../../test_data/populate_test_data.py --env local --count 100
 ```
 
 ### Workflow 4: Schema Inspection
 
 ```bash
 # Quick view of current database structure
-python check_schema.py --env source
+python ../../test_data/check_schema.py --env source
 
 # Compare with target environment
-python check_schema.py --env target
+python ../../test_data/check_schema.py --env target
 ```
 
 ### Workflow 5: Continuous Integration Testing
@@ -345,13 +337,13 @@ python check_schema.py --env target
 # CI/CD Pipeline Example
 
 # 1. Reset test database to baseline state
-python populate_test_data.py --env target --snapshot ../../baseline.json
+python ../../test_data/populate_test_data.py --env target --count 50
 
 # 2. Run application integration tests
 # (Your PetClinic application tests)
 
 # 3. Verify data integrity after tests
-python verify_migration.py --env target --snapshot ../../baseline.json
+python verify_migration.py --env target --baseline ../../baseline.json
 
 # 4. Check exit code (0 = all passed, 1 = failures detected)
 echo $?
@@ -483,16 +475,16 @@ python -c "import psycopg2; print(psycopg2.__version__)"
 
 ## Best Practices
 
-### 1. **Always Create Snapshots Before Major Operations**
+### 1. **Always Create Baselines Before Major Operations**
 ```bash
 # Before any migration or significant data changes
-python create_snapshot.py --env source --output ../../backups/snapshot_before_migration.json
+python create_baseline.py --env source
 ```
 
-### 2. **Use Descriptive Snapshot Names**
+### 2. **Verify After Data Changes**
 ```bash
-# Include context in filename
-python create_snapshot.py --env source --output ../../snapshot_v2.5_baseline.json
+# After any migration or data modification
+python verify_migration.py --env target --baseline ../../baseline_source_*.json
 ```
 
 ### 3. **Archive Snapshot Files**
@@ -543,17 +535,17 @@ python verify_migration.py --env target --snapshot ../../baselines/production_ba
 ### Quick Command Reference
 
 ```bash
-# Schema inspection
-python check_schema.py --env <source|target|local>
+# Schema inspection (from test_data directory)
+python ../../test_data/check_schema.py --env <source|target|local>
 
-# Create snapshot
-python create_snapshot.py --env <source|target|local> [--output filename.json]
+# Create baseline
+python create_baseline.py --env <source|target|local>
 
-# Populate database (clear + load snapshot + optional additional records)
-python populate_test_data.py [--env <source|target|local>] [--additional N] [--snapshot filename.json]
+# Populate database (clear + create test data)
+python ../../test_data/populate_test_data.py --env <source|target|local> --count N
 
 # Verify migration
-python verify_migration.py --env <source|target|local> --snapshot filename.json
+python verify_migration.py --env <source|target|local> --baseline filename.json
 ```
 
 ### Common Parameter Options
@@ -585,13 +577,13 @@ All scripts support these common parameters:
 ```yaml
 - name: Reset Test Database
   run: |
-    cd DataTest/DataIntegrityTests
-    python populate_test_data.py --env staging --snapshot ../../baselines/baseline.json
+    cd pet_clinic/test_data
+    python populate_test_data.py --env staging --count 50
 
 - name: Verify Database Integrity
   run: |
-    cd DataTest/DataIntegrityTests
-    python verify_migration.py --env staging --snapshot ../../baselines/baseline.json
+    cd pet_clinic/data_testing/data_integrity_tests
+    python verify_migration.py --env staging --baseline ../../baseline.json
     if [ $? -ne 0 ]; then
       echo "Database integrity verification failed!"
       exit 1
@@ -604,15 +596,15 @@ All scripts support these common parameters:
   displayName: 'Populate Test Data'
   inputs:
     scriptSource: 'filePath'
-    scriptPath: 'DataTest/DataIntegrityTests/populate_test_data.py'
-    arguments: '--env $(Environment) --snapshot $(SnapshotFile) --additional 100'
+    scriptPath: 'pet_clinic/test_data/populate_test_data.py'
+    arguments: '--env $(Environment) --count 100'
 
 - task: PythonScript@0
   displayName: 'Verify Database Integrity'
   inputs:
     scriptSource: 'filePath'
-    scriptPath: 'DataTest/DataIntegrityTests/verify_migration.py'
-    arguments: '--env $(Environment) --snapshot $(SnapshotFile)'
+    scriptPath: 'pet_clinic/data_testing/data_integrity_tests/verify_migration.py'
+    arguments: '--env $(Environment) --baseline $(BaselineFile)'
 ```
 
 ---
