@@ -8,7 +8,7 @@ test.describe('Owner Management', () => {
     await expect(page).toHaveTitle(/PetClinic/i);
   });
 
-  test('TC001-01: Verify navigation to Add Owner page', async ({ page }) => {
+  test('@sanity TC001-01: Verify navigation to Add Owner page', async ({ page }) => {
     await page.getByRole('link', { name: /find owners/i }).click();
     await page.getByRole('link', { name: /add owner/i }).click();
     
@@ -53,7 +53,7 @@ test.describe('Owner Management', () => {
     await expect(page.locator('body')).toContainText(telephone);
   });
 
-  test('TC001-03: Verify validation for empty required fields', async ({ page }) => {
+  test('@sanity TC001-03: Verify validation for empty required fields', async ({ page }) => {
     await page.getByRole('link', { name: /find owners/i }).click();
     await page.getByRole('link', { name: /add owner/i }).click();
 
@@ -66,7 +66,7 @@ test.describe('Owner Management', () => {
     await expect(page.locator('body')).toContainText('may not be empty'); 
   });
 
-  test('TC001-04: Verify validation for numeric telephone', async ({ page }) => {
+  test('@sanity TC001-04: Verify validation for numeric telephone', async ({ page }) => {
     await page.getByRole('link', { name: /find owners/i }).click();
     await page.getByRole('link', { name: /add owner/i }).click();
 

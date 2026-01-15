@@ -6,7 +6,7 @@ test.describe('Veterinarian Management', () => {
     await expect(page).toHaveTitle(/PetClinic/i);
   });
 
-  test('TC005-01: Verify veterinarians list display', async ({ page }) => {
+  test('@sanity TC005-01: Verify veterinarians list display', async ({ page }) => {
     // Navigate to Veterinarians
     await page.getByRole('link', { name: /veterinarians/i }).click();
 
@@ -24,7 +24,7 @@ test.describe('Veterinarian Management', () => {
     if (await xmlLink.count() > 0) await expect(xmlLink).toBeVisible();
   });
 
-  test('TC005-02: Verify Veterinarians JSON Endpoint', async ({ request }) => {
+  test('@sanity TC005-02: Verify Veterinarians JSON Endpoint', async ({ request }) => {
     // Use absolute path to avoid baseURL/path confusion
     const res = await request.get('/petclinic/vets.json');
     expect(res.status()).toBe(200);
@@ -36,7 +36,7 @@ test.describe('Veterinarian Management', () => {
     expect(isArray).toBeTruthy();
   });
 
-  test('TC005-03: Verify Veterinarians XML Endpoint', async ({ request }) => {
+  test('@sanity TC005-03: Verify Veterinarians XML Endpoint', async ({ request }) => {
     const res = await request.get('/petclinic/vets.xml');
     expect(res.status()).toBe(200);
     const ct = res.headers()['content-type'] || '';

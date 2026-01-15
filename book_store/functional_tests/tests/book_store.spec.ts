@@ -5,7 +5,7 @@ test.describe('Book Store Application Tests', () => {
 
   // --- UI TEST CASES ---
 
-  test('TC-UI-001: Verify Book List visibility on Home Page', async ({ page }) => {
+  test('@sanity TC-UI-001: Verify Book List visibility on Home Page', async ({ page }) => {
     await page.goto('/');
     
     // Verify "Book List" section/header if exists
@@ -123,7 +123,7 @@ test.describe('Book Store Application Tests', () => {
 
   // --- API TEST CASES ---
   
-  test('TC-API-001: Get all books', async ({ request }) => {
+  test('@sanity TC-API-001: Get all books', async ({ request }) => {
     const response = await request.get('/api/Books');
     expect(response.status()).toBe(200);
     const body = await response.json();
@@ -237,7 +237,7 @@ test.describe('Book Store Application Tests', () => {
     expect(response.status()).toBe(404);
   });
 
-  test('TC-API-007: Get all authors', async ({ request }) => {
+  test('@sanity TC-API-007: Get all authors', async ({ request }) => {
     const response = await request.get('/api/Authors');
     expect(response.status()).toBe(200);
     expect(Array.isArray(await response.json())).toBeTruthy();
