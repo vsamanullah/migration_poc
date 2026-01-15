@@ -142,6 +142,7 @@ WHERE id = (SELECT id FROM owners WHERE first_name LIKE &apos;Test%&apos; LIMIT 
           </JDBCSampler>
           <hashTree/>
           <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="Owners - Create then Delete" enabled="true">
+            <boolProp name="TransactionController.parent">true</boolProp>
             <boolProp name="TransactionController.includeTimers">false</boolProp>
           </TransactionController>
           <hashTree>
@@ -149,7 +150,7 @@ WHERE id = (SELECT id FROM owners WHERE first_name LIKE &apos;Test%&apos; LIMIT 
               <stringProp name="dataSource">PetClinicDB</stringProp>
               <stringProp name="queryType">Update Statement</stringProp>
               <stringProp name="query">INSERT INTO owners (first_name, last_name, address, city, telephone) 
-VALUES (&apos;Del${__Random(1000000,9999999)}&apos;, &apos;Test&apos;, &apos;Delete Address&apos;, &apos;Madison&apos;, &apos;0000000000&apos;)</stringProp>
+VALUES (&apos;ToDelete${__Random(1000000,9999999)}_${__threadNum}&apos;, &apos;Test&apos;, &apos;Delete Address&apos;, &apos;Madison&apos;, &apos;0000000000&apos;)</stringProp>
               <stringProp name="queryArguments"></stringProp>
               <stringProp name="queryArgumentsTypes"></stringProp>
               <stringProp name="variableNames"></stringProp>
@@ -162,7 +163,9 @@ VALUES (&apos;Del${__Random(1000000,9999999)}&apos;, &apos;Test&apos;, &apos;Del
             <JDBCSampler guiclass="TestBeanGUI" testclass="JDBCSampler" testname="Owners - DELETE" enabled="true">
               <stringProp name="dataSource">PetClinicDB</stringProp>
               <stringProp name="queryType">Update Statement</stringProp>
-              <stringProp name="query">DELETE FROM owners WHERE id = (SELECT id FROM owners WHERE first_name LIKE &apos;Del%&apos; LIMIT 1)</stringProp>
+              <stringProp name="query">DELETE FROM owners 
+WHERE first_name LIKE &apos;ToDelete%&apos; 
+  AND id NOT IN (SELECT DISTINCT owner_id FROM pets WHERE owner_id IS NOT NULL)</stringProp>
               <stringProp name="queryArguments"></stringProp>
               <stringProp name="queryArgumentsTypes"></stringProp>
               <stringProp name="variableNames"></stringProp>
@@ -256,7 +259,7 @@ ORDER BY p.id DESC LIMIT 50</stringProp>
             <stringProp name="dataSource">PetClinicDB</stringProp>
             <stringProp name="queryType">Update Statement</stringProp>
             <stringProp name="query">INSERT INTO pets (name, birth_date, type_id, owner_id) 
-VALUES (&apos;Pet${__Random(100000,999999)}&apos;, CURRENT_DATE - INTERVAL &apos;${__Random(1,10)} years&apos;, (SELECT id FROM types ORDER BY RANDOM() LIMIT 1), (SELECT id FROM owners ORDER BY RANDOM() LIMIT 1))</stringProp>
+VALUES (&apos;Pet${__Random(100000,999999)}&apos;, CURRENT_DATE - INTERVAL &apos;${__Random(1,10)} years&apos;, (SELECT id FROM types ORDER BY RANDOM() LIMIT 1), (SELECT id FROM owners WHERE first_name NOT LIKE &apos;ToDelete%&apos; ORDER BY RANDOM() LIMIT 1))</stringProp>
             <stringProp name="queryArguments"></stringProp>
             <stringProp name="queryArgumentsTypes"></stringProp>
             <stringProp name="variableNames"></stringProp>
@@ -289,7 +292,11 @@ WHERE id = (SELECT id FROM pets WHERE name LIKE &apos;Pet%&apos; LIMIT 1)</strin
               <stringProp name="dataSource">PetClinicDB</stringProp>
               <stringProp name="queryType">Update Statement</stringProp>
               <stringProp name="query">INSERT INTO pets (name, birth_date, type_id, owner_id) 
-VALUES (&apos;DelPet${__Random(100000,999999)}&apos;, CURRENT_DATE, (SELECT id FROM types LIMIT 1), (SELECT id FROM owners LIMIT 1))</stringProp>
+SELECT &apos;DelPet${__Random(100000,999999)}&apos;, CURRENT_DATE, t.id, o.id 
+FROM types t, owners o 
+WHERE t.id = (SELECT id FROM types ORDER BY RANDOM() LIMIT 1) 
+AND o.id = (SELECT id FROM owners WHERE first_name NOT LIKE &apos;Del%&apos; AND first_name NOT LIKE &apos;ToDelete%&apos; ORDER BY RANDOM() LIMIT 1) 
+LIMIT 1</stringProp>
               <stringProp name="queryArguments"></stringProp>
               <stringProp name="queryArgumentsTypes"></stringProp>
               <stringProp name="variableNames"></stringProp>

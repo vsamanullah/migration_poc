@@ -3,7 +3,7 @@ PetClinic Database Test Data Populator
 
 This script:
 1. Clears all existing records from the database
-2. Loads baseline data from snapshot JSON file
+2. Optionally loads baseline data from snapshot JSON file (if provided)
 3. Creates additional test records (N specified via command line)
 """
 
@@ -57,7 +57,7 @@ def get_connection(env_config: dict):
 class PetClinicDataPopulator:
     """Manages test data population for PetClinic database"""
     
-    def __init__(self, env_name: str, config_path: str, snapshot_file: str, additional_records: int):
+    def __init__(self, env_name: str, config_path: str, snapshot_file: str = None, additional_records: int = 0):
         self.env_name = env_name
         self.config_path = config_path
         self.snapshot_file = snapshot_file
@@ -234,8 +234,9 @@ class PetClinicDataPopulator:
             logger.info("\n• No additional records requested")
             return
         
+        record_type = "ADDITIONAL" if self.snapshot_file else "NEW"
         logger.info("\n" + "="*70)
-        logger.info(f"CREATING {self.additional_records} ADDITIONAL RECORDS")
+        logger.info(f"CREATING {self.additional_records} {record_type} RECORDS")
         logger.info("="*70)
         
         conn = self.get_connection()
@@ -263,8 +264,15 @@ class PetClinicDataPopulator:
             type_ids = [row[0] for row in cursor.fetchall()]
             
             if not type_ids:
-                logger.error("No pet types found in database. Cannot create pets.")
-                return
+                logger.info("No pet types found in database. Creating basic pet types...")
+                # Create basic pet types if none exist
+                basic_types = ["cat", "dog", "bird", "hamster"]
+                for pet_type in basic_types:
+                    cursor.execute('INSERT INTO petclinic.types (name) VALUES (%s) RETURNING id', (pet_type,))
+                    type_id = cursor.fetchone()[0]
+                    type_ids.append(type_id)
+                    logger.info(f"  ✓ Created pet type: {pet_type} (ID: {type_id})")
+                conn.commit()
             
             # Create additional owners
             owner_ids = self.populate_owners(conn, self.additional_records, max_owner_id)
@@ -477,7 +485,7 @@ class PetClinicDataPopulator:
         logger.info(f"Environment: {self.env_name}")
         logger.info(f"Database: {self.env_config['database']}")
         logger.info(f"Host: {self.env_config['host']}")
-        logger.info(f"Snapshot file: {self.snapshot_file}")
+        logger.info(f"Snapshot file: {self.snapshot_file or 'None (creating fresh data)'}")
         logger.info(f"Additional records: {self.additional_records}")
         logger.info("="*70)
         
@@ -489,8 +497,13 @@ class PetClinicDataPopulator:
         # Clear database
         self.clear_database()
         
-        # Load snapshot data
-        self.load_snapshot_data()
+        # Load snapshot data (if provided)
+        if self.snapshot_file:
+            self.load_snapshot_data()
+        else:
+            logger.info("\n" + "="*70)
+            logger.info("SKIPPING SNAPSHOT LOAD - Creating fresh data only")
+            logger.info("="*70)
         
         # Create additional records
         self.create_additional_records()
@@ -506,14 +519,14 @@ if __name__ == "__main__":
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
-  # Load snapshot only (no additional records) - uses default snapshot
-  python populate_test_data.py
-
-  # Load snapshot and create 50 additional owners (with pets)
+  # Create only additional records (no snapshot)
   python populate_test_data.py --additional 50
 
-  # Use specific snapshot file
+  # Load snapshot and create additional records
   python populate_test_data.py --snapshot ../petclinic_snapshot_custom.json --additional 20
+
+  # Load snapshot only (no additional records)
+  python populate_test_data.py --snapshot ../petclinic_snapshot_custom.json
 
   # Use different environment
   python populate_test_data.py --env local --additional 20
@@ -525,15 +538,15 @@ Examples:
                         help='Environment to use (default: source)')
     parser.add_argument('--config', type=str, default='../db_config.json',
                         help='Path to config file (default: ../db_config.json)')
-    parser.add_argument('--snapshot', type=str, default='../petclinic_snapshot_source_20260110_221752.json',
-                        help='Snapshot JSON file to load baseline data from (default: ../petclinic_snapshot_source_20260110_221752.json)')
+    parser.add_argument('--snapshot', type=str, default=None,
+                        help='Snapshot JSON file to load baseline data from (optional, default: None)')
     parser.add_argument('--additional', type=int, default=0,
                         help='Number of additional owner records to create (with pets, vets, and visits) (default: 0)')
     
     args = parser.parse_args()
     
-    # Check if snapshot file exists
-    if not Path(args.snapshot).exists():
+    # Check if snapshot file exists (if provided)
+    if args.snapshot and not Path(args.snapshot).exists():
         logger.error(f"Snapshot file not found: {args.snapshot}")
         sys.exit(1)
     

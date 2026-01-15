@@ -52,6 +52,23 @@ def print_header(text):
     print_color(text, Colors.CYAN + Colors.BOLD)
     print_color("=" * 70, Colors.CYAN)
 
+def format_duration(start_time, end_time=None):
+    """Format duration between two datetime objects"""
+    if end_time is None:
+        end_time = datetime.now()
+    
+    duration = end_time - start_time
+    total_seconds = duration.total_seconds()
+    minutes = total_seconds / 60
+    
+    if total_seconds < 60:
+        return f"{total_seconds:.2f}s"
+    elif minutes < 60:
+        return f"{total_seconds:.2f}s ({minutes:.2f} minutes)"
+    else:
+        hours = minutes / 60
+        return f"{total_seconds:.2f}s ({minutes:.2f} minutes, {hours:.2f} hours)"
+
 def check_jmeter():
     """Check if JMeter is available"""
     jmeter_cmd = 'jmeter.bat' if os.name == 'nt' else 'jmeter'
@@ -506,7 +523,6 @@ def seed_all_tables(conn_params):
 
 def run_jmeter_test(env_config, results_dir, timeout=600):
     """Run JMeter test"""
-    print_header("[Step 4/7] Running JMeter Test")
     
     # Create results directory
     results_dir.mkdir(parents=True, exist_ok=True)
@@ -539,13 +555,18 @@ def run_jmeter_test(env_config, results_dir, timeout=600):
     print(f"  Report: {report_dir}")
     print(f"  Timeout: {timeout} seconds")
     print()
-    print_color("  Starting JMeter test...", Colors.YELLOW)
+    
+    # Record JMeter start time
+    jmeter_start = datetime.now()
+    print_color(f"  🚀 Starting JMeter test at {jmeter_start.strftime('%I:%M:%S %p')}...", Colors.YELLOW)
     
     try:
         result = subprocess.run(cmd, capture_output=True, text=True, timeout=timeout)
+        jmeter_end = datetime.now()
         
         if result.returncode == 0:
-            print_color("  ✓ JMeter test completed successfully", Colors.GREEN)
+            print_color(f"  ✓ JMeter test completed successfully at {jmeter_end.strftime('%I:%M:%S %p')}", Colors.GREEN)
+            print_color(f"  ⏱️  JMeter execution time: {format_duration(jmeter_start, jmeter_end)}", Colors.GREEN)
             
             # Parse JMeter log for summary
             try:
@@ -561,14 +582,20 @@ def run_jmeter_test(env_config, results_dir, timeout=600):
             except Exception:
                 pass
         else:
+            jmeter_end = datetime.now()
             print_color(f"  ✗ JMeter test failed with return code {result.returncode}", Colors.RED)
+            print_color(f"  ⏱️  JMeter execution time: {format_duration(jmeter_start, jmeter_end)}", Colors.RED)
             if result.stderr:
                 print(f"    Error: {result.stderr[:200]}")
     
     except subprocess.TimeoutExpired:
+        jmeter_end = datetime.now()
         print_color("  ✗ JMeter test timed out", Colors.RED)
+        print_color(f"  ⏱️  JMeter execution time: {format_duration(jmeter_start, jmeter_end)}", Colors.RED)
     except Exception as e:
+        jmeter_end = datetime.now()
         print_color(f"  ✗ Error running JMeter: {e}", Colors.RED)
+        print_color(f"  ⏱️  JMeter execution time: {format_duration(jmeter_start, jmeter_end)}", Colors.RED)
     
     print()
     return jtl_file, report_dir
@@ -822,6 +849,10 @@ Examples:
     print_header("PETCLINIC DATABASE PERFORMANCE TEST - JMETER MODE")
     print(f"Environment: {args.environment}")
     print(f"Database: {database_name}")
+    
+    # Record start time
+    start_time = datetime.now()
+    print_color(f"Start Time: {start_time.strftime('%a %b %d %I:%M:%S %p')}", Colors.CYAN)
     print()
     
     # Check JMeter installation
@@ -835,8 +866,32 @@ Examples:
     cleanup_database(conn_params)
     print()
     
+    # Step 2.5: Validate Database Constraints
+    print_header("[Step 2.5/7] Validating Database Constraints")
+    try:
+        result = subprocess.run([
+            sys.executable, 
+            str(CURRENT_DIR / "validate_db_constraints.py")
+        ], capture_output=True, text=True, timeout=30)
+        
+        if result.returncode == 0:
+            print_color("✅ Database constraint validation passed", Colors.GREEN)
+            # Show validation output
+            for line in result.stdout.split('\n'):
+                if line.strip():
+                    print(f"  {line}")
+        else:
+            print_color("⚠️  Database constraint validation found issues:", Colors.YELLOW)
+            for line in result.stderr.split('\n'):
+                if line.strip():
+                    print(f"  {line}")
+    except Exception as e:
+        print_color(f"⚠️  Could not run database validation: {e}", Colors.YELLOW)
+    print()
+    
     # Step 3: Seeding (unless skipped)
     if not args.no_seed:
+        print_header("[Step 3/7] Seeding Database")        
         if not seed_all_tables(conn_params):
             print_color("\nDatabase seeding failed. Exiting.", Colors.RED)
             sys.exit(1)
@@ -847,15 +902,18 @@ Examples:
     # Performance monitoring (if enabled)
     perf_proc = None
     perf_file = None
+    print_header("[Step 4/7] Setting Up Performance Monitoring")
     if not args.no_profiling and os.name == 'nt':
         perf_file = JMETER_RESULTS_DIR / f"performance_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv"
         perf_proc = start_performance_monitoring(perf_file)
         time.sleep(2)  # Let monitoring stabilize
     
     # Run JMeter test
+    print_header("[Step 5/7] Running JMeter Database Performance Test")
     jtl_file, report_dir = run_jmeter_test(env_config, JMETER_RESULTS_DIR, timeout=args.timeout)
     
     # Stop monitoring
+    print_header("[Step 6/7] Processing Results")
     if perf_proc:
         stop_performance_monitoring(perf_proc)
     
@@ -864,14 +922,23 @@ Examples:
         process_performance_data(perf_file, JMETER_RESULTS_DIR)
     
     # Consolidate results
+    print_header("[Step 7/7] Consolidating Results")
     consolidate_results(jtl_file, report_dir, perf_file)
+    
+    # Calculate and display timing information
+    end_time = datetime.now()
     
     print_color("\n" + "=" * 70, Colors.GREEN)
     print_color("JMETER TEST COMPLETED SUCCESSFULLY!", Colors.GREEN)
     print_color("=" * 70, Colors.GREEN)
     print()
-    print(f"Results directory: {JMETER_RESULTS_DIR}")
-    print(f"Open report: {report_dir}/index.html")
+    print_color("📊 Test Execution Summary:", Colors.CYAN + Colors.BOLD)
+    print_color(f"Start Time: {start_time.strftime('%a %b %d %I:%M:%S %p')}", Colors.CYAN)
+    print_color(f"End Time: {end_time.strftime('%a %b %d %I:%M:%S %p')}", Colors.CYAN)
+    print_color(f"Total Duration: {format_duration(start_time, end_time)}", Colors.CYAN)
+    print()
+    print(f"📁 Results directory: {JMETER_RESULTS_DIR}")
+    print(f"🌐 Open report: {report_dir}/index.html")
     print()
 
 if __name__ == "__main__":

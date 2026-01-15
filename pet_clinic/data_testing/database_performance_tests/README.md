@@ -2,6 +2,21 @@
 
 Comprehensive database performance testing tool for PostgreSQL PetClinic database using JMeter JDBC testing with system performance profiling.
 
+## 🔧 Recent Updates (January 15, 2026)
+
+**Fixed Foreign Key Constraint Violations:**
+- ✅ Fixed Owners DELETE operations (was 85% failure rate)  
+- ✅ Fixed Pets INSERT operations with proper owner validation
+- ✅ Added database constraint validation step
+- ✅ Improved transaction ordering to respect referential integrity
+- ✅ Added cleanup delays to prevent race conditions
+
+**New Features:**
+- 🆕 **Database Constraint Validator** (`validate_db_constraints.py`)
+- 🆕 **Automated cleanup** of orphaned test data  
+- 🆕 **Improved error handling** for concurrent operations
+- 🆕 **Better step-by-step execution** with progress indicators
+
 ## Features
 
 - **JMeter-Based Testing**: Industry-standard performance testing with PostgreSQL JDBC
