@@ -1,9 +1,9 @@
 {
   "environments": {
     "source": {
-      "base_url": "http://petshop-legacy.ucgpoc.com:8080/petclinic/",
+      "base_url": "http://petclinic-legacy.ucgpoc.com:8080/petclinic",
       "protocol": "http",
-      "host": "petshop-legacy.ucgpoc.com",
+      "host": "petclinic-legacy.ucgpoc.com",
       "port": 8080,
       "context_path": "/petclinic",
       "verify_ssl": false,
