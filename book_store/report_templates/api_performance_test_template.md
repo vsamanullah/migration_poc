@@ -10,39 +10,457 @@
 
 ## Table of Contents
 
-1. [Introduction](#1-introduction)
-2. [Testing Overview](#2-testing-overview)
-3. [Test Scope](#3-test-scope)
-4. [Test Scenarios](#4-test-scenarios)
-5. [Test Data](#5-test-data)
-6. [Test Environment](#6-test-environment)
-7. [Test Results](#7-test-results)
-8. [Performance Analysis](#8-performance-analysis)
-9. [Recommendations and Conclusion](#9-recommendations-and-conclusion)
-10. [Revision History](#10-revision-history)
+1. [Test Objective](#1-test-objective)
+2. [Test Environment](#2-test-environment)
+3. [Test Methodology](#3-test-methodology)
+4. [Test Execution Summary](#4-test-execution-summary)
+5. [Results](#5-results)
+6. [Issues Identified](#6-issues-identified)
+7. [Recommendations](#7-recommendations)
+8. [Appendices](#8-appendices)
 
 ---
 
-## 1. Introduction
+## 1. Test Objective
 
+### Purpose
 This document presents the API performance test results for the [Project Name] project. The testing validates that the [application/system] API endpoints on the target environment meet performance requirements and maintain acceptable response times under various load conditions.
 
-[Brief description of the application/system being tested - what it does, its main API features, and its purpose.]
+### Scope
 
-### Document Purpose
-- Document API performance test execution results
-- Measure response times, throughput, and error rates under load
-- Compare performance between Source and Target environments
-- Identify performance bottlenecks and scalability limitations
-- Validate SLAs and performance requirements
-- Provide performance baseline for future testing
+**In Scope:**
+- API endpoint performance testing (GET, POST, PUT, DELETE operations)
+- Load testing under expected traffic conditions
+- Stress testing to determine system limits
+- Response time measurements (Average, 90th/95th/99th percentile)
+- Throughput analysis (requests/transactions per second)
+- Error rate monitoring
+- Resource utilization (CPU, Memory, Network I/O)
+- Performance comparison between environments
+
+**Out of Scope:**
+- Database performance testing (covered separately)
+- Security/penetration testing
+- Functional testing (covered separately)
+- UI performance testing
+- Non-HTTP protocols (WebSocket, gRPC)
+- Third-party integration performance
+- Mobile application performance
+- Geographic/multi-region testing
+
+### Success Criteria
+- Average response time meets SLA requirements
+- 95th percentile response time < [Target]ms
+- Error rate < 1% under normal load
+- Throughput meets or exceeds expected requests/second
+- System stable under sustained load
+- No critical performance degradation
 
 ---
 
-## 2. Testing Overview
+## 2. Test Environment
+
+### Environment Type
+**☐ Source Environment**  
+**☐ Target Environment**
+
+### Environment Details
+
+#### Source Environment (if applicable)
+- **URL/Server**: [Source System URL/Details]
+- **Technology Stack**: [Technology/Framework/Language]
+- **Database**: [Database Type and Version]
+- **Operating System**: [OS Details]
+- **Application Server**: [Server Details]
+- **API Version**: [Version]
+- **Cloud Platform**: [AWS/Azure/GCP/On-Premise]
+
+#### Target Environment (if applicable)
+- **URL/Server**: [Target System URL/Details]
+- **Technology Stack**: [Technology/Framework/Language]
+- **Database**: [Database Type and Version]
+- **Cloud Platform**: [AWS/Azure/GCP/On-Premise]
+- **Container Platform**: [Docker/Kubernetes - if applicable]
+- **API Version**: [Version]
+
+### Infrastructure Configuration
+
+| Component | Source | Target | Notes |
+|-----------|--------|--------|-------|
+| **Application Server** | [Details] | [Details] | [Migration notes if applicable] |
+| **Database** | [Details] | [Details] | [Migration notes if applicable] |
+| **CPU/RAM** | [Details] | [Details] | [Resource allocation] |
+| **Network** | [Details] | [Details] | [Bandwidth/latency] |
+
+### Test Tools and Framework
+- **Load Testing Tool**: Apache JMeter 5.6.2+
+- **Test Runner**: [Test Runner Details]
+- **Monitoring Tools**: [System monitoring tools]
+- **Profiling Tool**: Python script with psutil
+- **Reporting**: JMeter HTML Dashboard + CSV Results
+- **Data Management**: CSV files for test data
+
+### Network and Access
+- **Network Access**: [Details about connectivity]
+- **VPN/Proxy Requirements**: [If applicable]
+- **SSL/TLS Configuration**: [Certificate details]
+- **Authentication**: [Method used]
+
+---
+
+## 3. Test Methodology
 
 ### Test Approach
 Performance testing was conducted using **Apache JMeter 5.6.2+** for API load testing. The testing approach includes:
+
+- **Load Testing**: Validate system behavior under expected load
+- **Stress Testing**: Determine system breaking points and maximum capacity
+- **Endurance Testing**: Verify sustained performance over extended periods
+- **Spike Testing**: Assess response to sudden traffic increases
+- **Baseline Testing**: Establish performance metrics for comparison
+
+### Test Types Executed
+
+#### 3.1 API Performance Tests
+**Description**: API endpoint performance testing under various load conditions
+
+**API Endpoints Tested:**
+
+**Authors API:**
+- `GET /api/Authors` - Retrieve all authors (List operation)
+- `GET /api/Authors/{id}` - Retrieve specific author by ID
+- `POST /api/Authors` - Create new author
+- `DELETE /api/Authors/{id}` - Delete author by ID
+
+**Books API:**
+- `GET /api/Books` - Retrieve all books (List operation)
+- `GET /api/Books/{id}` - Retrieve specific book by ID
+- `POST /api/Books` - Create new book
+- `DELETE /api/Books/{id}` - Delete book by ID
+
+**Test Scenarios:**
+
+| Scenario ID | Test File | Description | Priority |
+|-------------|-----------|-------------|----------|
+| **PS-API-01** | 01_Authors_GET_All.jmx | GET All Authors - List Operation | High |
+| **PS-API-02** | 02_Authors_GET_ById.jmx | GET Author by ID | High |
+| **PS-API-03** | 03_Authors_POST_Create.jmx | POST Create Author | High |
+| **PS-API-04** | 04_Authors_DELETE.jmx | DELETE Author | Medium |
+| **PS-API-05** | 05_Books_GET_All.jmx | GET All Books - List Operation | High |
+| **PS-API-06** | 06_Books_GET_ById.jmx | GET Book by ID | High |
+| **PS-API-07** | 07_Books_POST_Create.jmx | POST Create Book | High |
+| **PS-API-08** | 8_Books_DELETE.jmx | DELETE Book | Medium |
+
+#### 3.2 Load Profiles
+
+| Test Type | Virtual Users | Ramp-up | Duration | Purpose |
+|-----------|--------------|---------|----------|---------|
+| **Light Load** | 10-20 users | 5s | 5 min | Normal operations |
+| **Moderate Load** | 50 users | 10s | 5 min | Peak business hours |
+| **Heavy Load** | [Number] users | [Time] | [Duration] | Stress testing |
+| **Spike Load** | [Number] users | [Time] | [Duration] | Traffic spikes |
+
+#### 3.3 Performance Metrics Measured
+
+- **Response Time**: Min, Max, Average, 90th/95th/99th Percentile
+- **Throughput**: Requests per second, Transactions per second
+- **Error Rate**: Percentage of failed requests
+- **Concurrent Users**: Number of simultaneous virtual users
+- **CPU Utilization**: Server CPU usage during tests
+- **Memory Usage**: Server memory consumption
+- **Network I/O**: Data transfer rates
+
+### Test Data Management
+**Strategy**: CSV-based test data for parameterized testing
+
+- **Data Source**: CSV files (author_data.csv, book_data.csv, author_ids.csv, book_ids.csv)
+- **Data Volume**: [Amount of test data used]
+- **Data Cleanup**: [Strategy for cleanup after tests]
+- **Data Isolation**: Separate test data sets for each test scenario
+
+### Test Execution Timeline
+- **Test Planning**: [Start Date] - [End Date]
+- **Test Environment Setup**: [Start Date] - [End Date]
+- **Test Execution**: [Start Date] - [End Date]
+- **Performance Analysis**: [Start Date] - [End Date]
+- **Report Generation**: [Date]
+
+---
+
+## 4. Test Execution Summary
+
+### Execution Overview
+
+| Metric | Value |
+|--------|-------|
+| **Total Test Scenarios** | [Number] |
+| **Executed** | [Number] |
+| **Passed** | [Number] |
+| **Failed** | [Number] |
+| **Overall Pass Rate** | [Percentage]% |
+| **Total Requests Sent** | [Number] |
+| **Total Response Time** | [Time] |
+
+### Test Execution by Category
+
+#### Authors API Test Execution
+
+| Test Scenario | Virtual Users | Duration | Status | Environment | Notes |
+|---------------|--------------|----------|--------|-------------|-------|
+| **PS-API-01: GET All Authors** | 50 | 5 min | [Pass/Fail] | [Source/Target] | [Notes] |
+| **PS-API-02: GET Author by ID** | 50 | 5 min | [Pass/Fail] | [Source/Target] | [Notes] |
+| **PS-API-03: POST Create Author** | 20 | 2 min | [Pass/Fail] | [Source/Target] | [Notes] |
+| **PS-API-04: DELETE Author** | 10 | 1 min | [Pass/Fail] | [Source/Target] | [Notes] |
+
+**Summary:**
+- Total Scenarios: [Number]
+- Passed: [Number]
+- Failed: [Number]
+- Pass Rate: [Percentage]%
+
+#### Books API Test Execution
+
+| Test Scenario | Virtual Users | Duration | Status | Environment | Notes |
+|---------------|--------------|----------|--------|-------------|-------|
+| **PS-API-05: GET All Books** | 50 | 5 min | [Pass/Fail] | [Source/Target] | [Notes] |
+| **PS-API-06: GET Book by ID** | 50 | 5 min | [Pass/Fail] | [Source/Target] | [Notes] |
+| **PS-API-07: POST Create Book** | 20 | 2 min | [Pass/Fail] | [Source/Target] | [Notes] |
+| **PS-API-08: DELETE Book** | 10 | 1 min | [Pass/Fail] | [Source/Target] | [Notes] |
+
+**Summary:**
+- Total Scenarios: [Number]
+- Passed: [Number]
+- Failed: [Number]
+- Pass Rate: [Percentage]%
+
+### Execution Timeline
+
+| Activity | Start Date | End Date | Duration | Status |
+|----------|-----------|----------|----------|--------|
+| **Test Setup** | [Date] | [Date] | [Duration] | [Complete/In Progress] |
+| **Authors API Testing** | [Date] | [Date] | [Duration] | [Complete/In Progress] |
+| **Books API Testing** | [Date] | [Date] | [Duration] | [Complete/In Progress] |
+| **Performance Analysis** | [Date] | [Date] | [Duration] | [Complete/In Progress] |
+| **Report Generation** | [Date] | [Date] | [Duration] | [Complete/In Progress] |
+
+---
+
+## 5. Results
+
+### 5.1 Overall Results Summary
+
+**Test Execution Status:**
+- Total Test Scenarios Executed: [Number]
+- Total Passed: [Number] ([Percentage]%)
+- Total Failed: [Number] ([Percentage]%)
+- **Overall Pass Rate: [Percentage]%**
+- **Total Requests Processed: [Number]**
+- **Average Throughput: [Number] req/s**
+
+### 5.2 Results by Environment
+
+#### Source Environment Results (if applicable)
+- Total Test Scenarios: [Number]
+- Passed: [Number]
+- Failed: [Number]
+- Pass Rate: [Percentage]%
+- Average Response Time: [Time]ms
+- Throughput: [Number] req/s
+
+#### Target Environment Results (if applicable)
+- Total Test Scenarios: [Number]
+- Passed: [Number]
+- Failed: [Number]
+- Pass Rate: [Percentage]%
+- Average Response Time: [Time]ms
+- Throughput: [Number] req/s
+
+### 5.3 Key Metrics
+
+| Metric | Target | Actual | Status |
+|--------|--------|--------|--------|
+| **Average Response Time** | [Target]ms | [Actual]ms | [✅ Met/❌ Not Met] |
+| **95th Percentile Response** | [Target]ms | [Actual]ms | [✅ Met/❌ Not Met] |
+| **Error Rate** | < 1% | [Actual]% | [✅ Met/❌ Not Met] |
+| **Throughput** | [Target] req/s | [Actual] req/s | [✅ Met/❌ Not Met] |
+| **CPU Utilization** | < [Target]% | [Actual]% | [✅ Met/❌ Not Met] |
+| **Memory Usage** | < [Target]% | [Actual]% | [✅ Met/❌ Not Met] |
+
+### 5.4 Performance by API Endpoint
+
+#### Authors API Performance
+
+| Endpoint | Avg Response (ms) | 95th Percentile (ms) | Throughput (req/s) | Error Rate | Status |
+|----------|-------------------|---------------------|-------------------|------------|--------|
+| **GET /api/Authors** | [Value] | [Value] | [Value] | [Value]% | [✅ Met/❌ Not Met] |
+| **GET /api/Authors/{id}** | [Value] | [Value] | [Value] | [Value]% | [✅ Met/❌ Not Met] |
+| **POST /api/Authors** | [Value] | [Value] | [Value] | [Value]% | [✅ Met/❌ Not Met] |
+| **DELETE /api/Authors/{id}** | [Value] | [Value] | [Value] | [Value]% | [✅ Met/❌ Not Met] |
+
+#### Books API Performance
+
+| Endpoint | Avg Response (ms) | 95th Percentile (ms) | Throughput (req/s) | Error Rate | Status |
+|----------|-------------------|---------------------|-------------------|------------|--------|
+| **GET /api/Books** | [Value] | [Value] | [Value] | [Value]% | [✅ Met/❌ Not Met] |
+| **GET /api/Books/{id}** | [Value] | [Value] | [Value] | [Value]% | [✅ Met/❌ Not Met] |
+| **POST /api/Books** | [Value] | [Value] | [Value] | [Value]% | [✅ Met/❌ Not Met] |
+| **DELETE /api/Books/{id}** | [Value] | [Value] | [Value] | [Value]% | [✅ Met/❌ Not Met] |
+
+### 5.5 Resource Utilization
+
+| Resource | Peak Usage | Average Usage | Status |
+|----------|------------|--------------|--------|
+| **CPU** | [Peak]% | [Avg]% | [Normal/High/Critical] |
+| **Memory** | [Peak]% | [Avg]% | [Normal/High/Critical] |
+| **Network I/O** | [Peak] MB/s | [Avg] MB/s | [Normal/High/Critical] |
+| **Disk I/O** | [Peak] MB/s | [Avg] MB/s | [Normal/High/Critical] |
+
+### 5.6 Performance Comparison
+
+[Compare performance between Source and Target environments if applicable]
+
+| Metric | Source | Target | Difference | Status |
+|--------|--------|--------|------------|--------|
+| **Avg Response Time** | [Value]ms | [Value]ms | [+/-]% | [Better/Worse/Same] |
+| **95th Percentile** | [Value]ms | [Value]ms | [+/-]% | [Better/Worse/Same] |
+| **Throughput** | [Value] req/s | [Value] req/s | [+/-]% | [Better/Worse/Same] |
+| **Error Rate** | [Value]% | [Value]% | [+/-]% | [Better/Worse/Same] |
+
+### 5.7 Successful Performance Areas
+
+#### ✅ Endpoints Meeting Performance Requirements:
+1. **[Endpoint 1]**: [Description of performance achievement]
+2. **[Endpoint 2]**: [Description of performance achievement]
+3. **[Endpoint 3]**: [Description of performance achievement]
+4. **[Endpoint 4]**: [Description of performance achievement]
+
+### 5.8 Performance Quality Assessment
+
+**Performance Quality Rating: [Excellent/Good/Acceptable/Poor]**
+
+**Assessment Criteria:**
+
+| Criteria | Rating | Comments |
+|----------|--------|----------|
+| **Response Time** | [1-5] | [Comments] |
+| **Throughput** | [1-5] | [Comments] |
+| **Scalability** | [1-5] | [Comments] |
+| **Stability** | [1-5] | [Comments] |
+| **Resource Efficiency** | [1-5] | [Comments] |
+
+---
+
+## 6. Issues Identified
+
+### 6.1 Performance Issue Summary
+
+| Severity | Count | Resolved | Pending | Remarks |
+|----------|-------|----------|---------|---------|
+| **Critical** | [Number] | [Number] | [Number] | [Status] |
+| **High** | [Number] | [Number] | [Number] | [Status] |
+| **Medium** | [Number] | [Number] | [Number] | [Status] |
+| **Low** | [Number] | [Number] | [Number] | [Status] |
+| **Total** | [Number] | [Number] | [Number] | - |
+
+### 6.2 Critical Performance Issues
+
+| Issue ID | Description | Environment | Impact | Status | Resolution |
+|----------|-------------|-------------|--------|--------|------------|
+| **PERF-001** | [Issue description] | [Source/Target/Both] | [Critical/High/Medium/Low] | [Open/Resolved] | [Resolution details] |
+| **PERF-002** | [Issue description] | [Source/Target/Both] | [Critical/High/Medium/Low] | [Open/Resolved] | [Resolution details] |
+
+### 6.3 High Priority Performance Issues
+
+| Issue ID | Description | Environment | Impact | Status | Resolution |
+|----------|-------------|-------------|--------|--------|------------|
+| **PERF-003** | [Issue description] | [Source/Target/Both] | [Critical/High/Medium/Low] | [Open/Resolved] | [Resolution details] |
+| **PERF-004** | [Issue description] | [Source/Target/Both] | [Critical/High/Medium/Low] | [Open/Resolved] | [Resolution details] |
+
+### 6.4 Medium/Low Priority Issues
+
+| Issue ID | Description | Environment | Impact | Status |
+|----------|-------------|-------------|--------|--------|
+| **PERF-005** | [Issue description] | [Source/Target/Both] | [Medium/Low] | [Open/Resolved] |
+| **PERF-006** | [Issue description] | [Source/Target/Both] | [Medium/Low] | [Open/Resolved] |
+
+### 6.5 Performance Bottlenecks
+
+| Bottleneck | Location | Impact | Root Cause | Mitigation |
+|------------|----------|--------|------------|------------|
+| [Bottleneck 1] | [System component] | [Impact description] | [Root cause] | [Mitigation strategy] |
+| [Bottleneck 2] | [System component] | [Impact description] | [Root cause] | [Mitigation strategy] |
+
+### 6.6 Risks Identified
+
+| Risk | Impact | Likelihood | Mitigation |
+|------|--------|------------|------------|
+| [Risk description] | [High/Medium/Low] | [High/Medium/Low] | [Mitigation strategy] |
+| [Risk description] | [High/Medium/Low] | [High/Medium/Low] | [Mitigation strategy] |
+
+---
+
+## 7. Recommendations
+
+### 7.1 Immediate Actions Required
+1. **[Action Item 1]**: [Description and rationale]
+   - **Priority**: [Critical/High/Medium/Low]
+   - **Owner**: [Team/Person]
+   - **Timeline**: [Timeframe]
+
+2. **[Action Item 2]**: [Description and rationale]
+   - **Priority**: [Critical/High/Medium/Low]
+   - **Owner**: [Team/Person]
+   - **Timeline**: [Timeframe]
+
+### 7.2 Performance Optimization Recommendations
+1. **[Optimization 1]**: [Description]
+   - **Expected Benefit**: [Benefit description]
+   - **Effort**: [Low/Medium/High]
+
+2. **[Optimization 2]**: [Description]
+   - **Expected Benefit**: [Benefit description]
+   - **Effort**: [Low/Medium/High]
+
+### 7.3 Long-Term Enhancements
+1. **[Enhancement 1]**: [Description]
+   - **Strategic Value**: [Value description]
+   - **Timeline**: [Timeframe]
+
+2. **[Enhancement 2]**: [Description]
+   - **Strategic Value**: [Value description]
+   - **Timeline**: [Timeframe]
+
+### 7.4 Infrastructure Recommendations
+1. **[Infrastructure Recommendation 1]**: [Description]
+2. **[Infrastructure Recommendation 2]**: [Description]
+3. **[Infrastructure Recommendation 3]**: [Description]
+
+### 7.5 Monitoring and Alerting
+1. **[Monitoring Recommendation 1]**: [Description]
+2. **[Monitoring Recommendation 2]**: [Description]
+3. **[Monitoring Recommendation 3]**: [Description]
+
+### 7.6 Go-Live Readiness Assessment
+
+**Recommendation: [GO/NO-GO/CONDITIONAL GO]**
+
+**Justification:**
+[Provide detailed justification for the recommendation based on performance results, issues, and risk assessment]
+
+**Conditions for Go-Live (if applicable):**
+1. [Condition 1]
+2. [Condition 2]
+3. [Condition 3]
+
+**Confidence Level: [HIGH/MEDIUM/LOW]**
+
+---
+
+## 8. Appendices
+
+### Appendix A: Detailed Test Results
+
+#### A.1 Test Scenario Details
 
 - **Load Testing**: Validate system behavior under expected load
 - **Stress Testing**: Determine system breaking points and maximum capacity
@@ -479,267 +897,295 @@ BookId
 | **95th Percentile** | [Time] ms |
 | **99th Percentile** | [Time] ms |
 | **Min Response Time** | [Time] ms |
-| **Max Response Time** | [Time] ms |
-| **Throughput** | [Number] requests/sec |
-| **Error Rate** | [Percentage]% |
-| **Data Transferred** | [Size] KB/sec |
 
-**Target Environment Results:**
 
-| Metric | Value |
-|--------|-------|
-| **Total Samples** | [Number] |
-| **Average Response Time** | [Time] ms |
-| **Median Response Time** | [Time] ms |
-| **90th Percentile** | [Time] ms |
-| **95th Percentile** | [Time] ms |
-| **99th Percentile** | [Time] ms |
-| **Min Response Time** | [Time] ms |
-| **Max Response Time** | [Time] ms |
-| **Throughput** | [Number] requests/sec |
-| **Error Rate** | [Percentage]% |
-| **Data Transferred** | [Size] KB/sec |
+#### A.1 Test Scenario Details
 
-**Status**: ✅ PASS / ❌ FAIL  
-**Notes**: [Any observations, anomalies, or issues noted during testing]
+##### PS-API-01: GET All Authors - List Operation
+**Test File**: `01_Authors_GET_All.jmx`
 
----
+**Objective**: Measure performance of retrieving the complete list of authors under sustained load
 
-#### Test PS-API-02: GET Author by ID
+**Test Configuration**:
+- **Virtual Users**: 50 concurrent threads
+- **Ramp-up Time**: 10 seconds (5 users/second)
+- **Test Duration**: 300 seconds (5 minutes)
+- **Loop**: Infinite loop during test duration
+- **Think Time**: 1000ms between requests
 
-**Source Environment Results:**
+**Endpoint**: `GET /api/Authors`
 
-| Metric | Value |
-|--------|-------|
-| **Total Samples** | [Number] |
-| **Average Response Time** | [Time] ms |
-| **Median Response Time** | [Time] ms |
-| **90th Percentile** | [Time] ms |
-| **95th Percentile** | [Time] ms |
-| **99th Percentile** | [Time] ms |
-| **Throughput** | [Number] requests/sec |
-| **Error Rate** | [Percentage]% |
-
-**Target Environment Results:**
-
-| Metric | Value |
-|--------|-------|
-| **Total Samples** | [Number] |
-| **Average Response Time** | [Time] ms |
-| **Median Response Time** | [Time] ms |
-| **90th Percentile** | [Time] ms |
-| **95th Percentile** | [Time] ms |
-| **99th Percentile** | [Time] ms |
-| **Throughput** | [Number] requests/sec |
-| **Error Rate** | [Percentage]% |
-
-**Status**: ✅ PASS / ❌ FAIL  
-**Notes**: [Any observations]
+**Expected Performance Criteria**:
+- Average Response Time: < 500ms
+- 90th Percentile: < 800ms
+- 95th Percentile: < 1000ms
+- Error Rate: < 1%
+- Throughput: > 80 requests/second
 
 ---
 
-#### Test PS-API-03: POST Create Author
+##### PS-API-02: GET Author by ID - Single Record Retrieval
+**Test File**: `02_Authors_GET_ById.jmx`
 
-**Source Environment Results:**
+**Objective**: Measure performance of retrieving individual author records by ID
 
-| Metric | Value |
-|--------|-------|
-| **Total Samples** | [Number] |
-| **Average Response Time** | [Time] ms |
-| **Median Response Time** | [Time] ms |
-| **90th Percentile** | [Time] ms |
-| **Throughput** | [Number] requests/sec |
-| **Error Rate** | [Percentage]% |
-| **Successful Creates** | [Number] |
+**Test Configuration**:
+- **Virtual Users**: 50 concurrent threads
+- **Ramp-up Time**: 10 seconds
+- **Test Duration**: 300 seconds (5 minutes)
+- **Data Source**: `author_ids.csv` (contains valid author IDs)
+- **Think Time**: 1000ms between requests
 
-**Target Environment Results:**
+**Endpoint**: `GET /api/Authors/{id}`
 
-| Metric | Value |
-|--------|-------|
-| **Total Samples** | [Number] |
-| **Average Response Time** | [Time] ms |
-| **Median Response Time** | [Time] ms |
-| **90th Percentile** | [Time] ms |
-| **Throughput** | [Number] requests/sec |
-| **Error Rate** | [Percentage]% |
-| **Successful Creates** | [Number] |
-
-**Status**: ✅ PASS / ❌ FAIL  
-**Notes**: [Any observations]
+**Expected Performance Criteria**:
+- Average Response Time: < 300ms
+- 90th Percentile: < 500ms
+- 95th Percentile: < 700ms
+- Error Rate: < 1%
+- Throughput: > 100 requests/second
 
 ---
 
-#### Test PS-API-04: DELETE Author
+##### PS-API-03: POST Create Author - Write Operation
+**Test File**: `03_Authors_POST_Create.jmx`
 
-**Source Environment Results:**
+**Objective**: Measure performance of creating new author records under load
 
-| Metric | Value |
-|--------|-------|
-| **Total Samples** | [Number] |
-| **Average Response Time** | [Time] ms |
-| **Throughput** | [Number] requests/sec |
-| **Error Rate** | [Percentage]% |
+**Test Configuration**:
+- **Virtual Users**: 20 concurrent threads
+- **Ramp-up Time**: 5 seconds
+- **Test Duration**: 120 seconds (2 minutes)
+- **Data Source**: `author_data.csv` (contains author test data)
+- **Think Time**: 1000ms between requests
 
-**Target Environment Results:**
+**Endpoint**: `POST /api/Authors`
 
-| Metric | Value |
-|--------|-------|
-| **Total Samples** | [Number] |
-| **Average Response Time** | [Time] ms |
-| **Throughput** | [Number] requests/sec |
-| **Error Rate** | [Percentage]% |
+**Request Body**:
+```json
+{
+  "Name": "${Name}",
+  "Bio": "${Bio}",
+  "DateOfBirth": "${DateOfBirth}"
+}
+```
 
-**Status**: ✅ PASS / ❌ FAIL  
-**Notes**: [Any observations]
-
----
-
-### 7.2 Books API Test Results
-
-#### Test PS-API-05: GET All Books
-
-**Source Environment Results:**
-
-| Metric | Value |
-|--------|-------|
-| **Total Samples** | [Number] |
-| **Average Response Time** | [Time] ms |
-| **Median Response Time** | [Time] ms |
-| **90th Percentile** | [Time] ms |
-| **95th Percentile** | [Time] ms |
-| **99th Percentile** | [Time] ms |
-| **Throughput** | [Number] requests/sec |
-| **Error Rate** | [Percentage]% |
-
-**Target Environment Results:**
-
-| Metric | Value |
-|--------|-------|
-| **Total Samples** | [Number] |
-| **Average Response Time** | [Time] ms |
-| **Median Response Time** | [Time] ms |
-| **90th Percentile** | [Time] ms |
-| **95th Percentile** | [Time] ms |
-| **99th Percentile** | [Time] ms |
-| **Throughput** | [Number] requests/sec |
-| **Error Rate** | [Percentage]% |
-
-**Status**: ✅ PASS / ❌ FAIL  
-**Notes**: [Any observations]
+**Expected Performance Criteria**:
+- Average Response Time: < 800ms
+- 90th Percentile: < 1200ms
+- Error Rate: < 1%
+- Throughput: > 15 requests/second
 
 ---
 
-#### Test PS-API-06: GET Book by ID
+##### PS-API-04: DELETE Author - Delete Operation
+**Test File**: `04_Authors_DELETE.jmx`
 
-**Source Environment Results:**
+**Objective**: Measure performance of deleting author records
 
-| Metric | Value |
-|--------|-------|
-| **Total Samples** | [Number] |
-| **Average Response Time** | [Time] ms |
-| **90th Percentile** | [Time] ms |
-| **Throughput** | [Number] requests/sec |
-| **Error Rate** | [Percentage]% |
+**Test Configuration**:
+- **Virtual Users**: 10 concurrent threads
+- **Ramp-up Time**: 5 seconds
+- **Test Duration**: 60 seconds (1 minute)
+- **Data Source**: `delete_author_ids.csv` (contains author IDs to delete)
 
-**Target Environment Results:**
+**Endpoint**: `DELETE /api/Authors/{id}`
 
-| Metric | Value |
-|--------|-------|
-| **Total Samples** | [Number] |
-| **Average Response Time** | [Time] ms |
-| **90th Percentile** | [Time] ms |
-| **Throughput** | [Number] requests/sec |
-| **Error Rate** | [Percentage]% |
-
-**Status**: ✅ PASS / ❌ FAIL  
-**Notes**: [Any observations]
+**Expected Performance Criteria**:
+- Average Response Time: < 500ms
+- Error Rate: < 1%
+- Throughput: > 10 requests/second
 
 ---
 
-#### Test PS-API-07: POST Create Book
+##### PS-API-05: GET All Books - List Operation
+**Test File**: `05_Books_GET_All.jmx`
 
-**Source Environment Results:**
+**Objective**: Measure performance of retrieving the complete book catalog under load
 
-| Metric | Value |
-|--------|-------|
-| **Total Samples** | [Number] |
-| **Average Response Time** | [Time] ms |
-| **90th Percentile** | [Time] ms |
-| **Throughput** | [Number] requests/sec |
-| **Error Rate** | [Percentage]% |
+**Test Configuration**:
+- **Virtual Users**: 50 concurrent threads
+- **Ramp-up Time**: 10 seconds
+- **Test Duration**: 300 seconds (5 minutes)
+- **Think Time**: 1000ms between requests
 
-**Target Environment Results:**
+**Endpoint**: `GET /api/Books`
 
-| Metric | Value |
-|--------|-------|
-| **Total Samples** | [Number] |
-| **Average Response Time** | [Time] ms |
-| **90th Percentile** | [Time] ms |
-| **Throughput** | [Number] requests/sec |
-| **Error Rate** | [Percentage]% |
-
-**Status**: ✅ PASS / ❌ FAIL  
-**Notes**: [Any observations]
+**Expected Performance Criteria**:
+- Average Response Time: < 600ms (larger dataset than Authors)
+- 90th Percentile: < 1000ms
+- 95th Percentile: < 1500ms
+- Error Rate: < 1%
+- Throughput: > 70 requests/second
 
 ---
 
-#### Test PS-API-08: DELETE Book
+##### PS-API-06: GET Book by ID - Single Record Retrieval
+**Test File**: `06_Books_GET_ById.jmx`
 
-**Source Environment Results:**
+**Objective**: Measure performance of retrieving individual book records by ID
 
-| Metric | Value |
-|--------|-------|
-| **Total Samples** | [Number] |
-| **Average Response Time** | [Time] ms |
-| **Throughput** | [Number] requests/sec |
-| **Error Rate** | [Percentage]% |
+**Test Configuration**:
+- **Virtual Users**: 50 concurrent threads
+- **Ramp-up Time**: 10 seconds
+- **Test Duration**: 300 seconds (5 minutes)
+- **Data Source**: `book_ids.csv` (contains valid book IDs)
+- **Think Time**: 1000ms between requests
 
-**Target Environment Results:**
+**Endpoint**: `GET /api/Books/{id}`
 
-| Metric | Value |
-|--------|-------|
-| **Total Samples** | [Number] |
-| **Average Response Time** | [Time] ms |
-| **Throughput** | [Number] requests/sec |
-| **Error Rate** | [Percentage]% |
-
-**Status**: ✅ PASS / ❌ FAIL  
-**Notes**: [Any observations]
+**Expected Performance Criteria**:
+- Average Response Time: < 350ms
+- 90th Percentile: < 600ms
+- Error Rate: < 1%
+- Throughput: > 90 requests/second
 
 ---
 
-### 7.3 Test Execution Summary
+##### PS-API-07: POST Create Book - Write Operation
+**Test File**: `07_Books_POST_Create.jmx`
 
-#### Overall Test Results
+**Objective**: Measure performance of creating new book records with foreign key relationships
 
-| Metric | Source Environment | Target Environment | Comparison |
-|--------|-------------------|-------------------|------------|
-| **Total Test Cases** | [Number] | [Number] | [Status] |
-| **Passed** | [Number] | [Number] | [Status] |
-| **Failed** | [Number] | [Number] | [Status] |
-| **Success Rate** | [Percentage]% | [Percentage]% | [+/- %] |
-| **Average Response Time** | [Time] ms | [Time] ms | [+/- %] |
-| **Total Requests** | [Number] | [Number] | [Status] |
-| **Total Test Duration** | [Duration] | [Duration] | [Status] |
+**Test Configuration**:
+- **Virtual Users**: 20 concurrent threads
+- **Ramp-up Time**: 5 seconds
+- **Test Duration**: 120 seconds (2 minutes)
+- **Data Source**: `book_create_data.csv` (contains book and author data)
+- **Think Time**: 1000ms between requests
 
-#### Performance by Operation Type
+**Endpoint**: `POST /api/Books`
 
-| Operation Type | Source Avg RT | Target Avg RT | Source Throughput | Target Throughput |
-|----------------|--------------|--------------|-------------------|-------------------|
-| **GET (List)** | [Time] ms | [Time] ms | [Number] req/s | [Number] req/s |
-| **GET (ID)** | [Time] ms | [Time] ms | [Number] req/s | [Number] req/s |
-| **POST (Create)** | [Time] ms | [Time] ms | [Number] req/s | [Number] req/s |
-| **DELETE** | [Time] ms | [Time] ms | [Number] req/s | [Number] req/s |
+**Request Body**:
+```json
+{
+  "Title": "${Title}",
+  "Year": ${Year},
+  "Price": ${Price},
+  "Genre": "${Genre}",
+  "AuthorId": ${AuthorId}
+}
+```
 
-#### SLA Compliance
+**Expected Performance Criteria**:
+- Average Response Time: < 900ms
+- 90th Percentile: < 1500ms
+- Error Rate: < 1%
+- Throughput: > 12 requests/second
 
-| SLA Requirement | Source Status | Target Status |
-|----------------|--------------|--------------|
-| **Response Time < 500ms (GET All)** | ✅ PASS / ❌ FAIL | ✅ PASS / ❌ FAIL |
-| **Response Time < 300ms (GET ID)** | ✅ PASS / ❌ FAIL | ✅ PASS / ❌ FAIL |
-| **Response Time < 800ms (POST)** | ✅ PASS / ❌ FAIL | ✅ PASS / ❌ FAIL |
-| **Error Rate < 1%** | ✅ PASS / ❌ FAIL | ✅ PASS / ❌ FAIL |
-| **Throughput > Target** | ✅ PASS / ❌ FAIL | ✅ PASS / ❌ FAIL |
+---
+
+##### PS-API-08: DELETE Book - Delete Operation
+**Test File**: `8_Books_DELETE.jmx`
+
+**Objective**: Measure performance of deleting book records
+
+**Test Configuration**:
+- **Virtual Users**: 10 concurrent threads
+- **Ramp-up Time**: 5 seconds
+- **Test Duration**: 60 seconds (1 minute)
+- **Data Source**: `delete_book_ids.csv` (contains book IDs to delete)
+
+**Endpoint**: `DELETE /api/Books/{id}`
+
+**Expected Performance Criteria**:
+- Average Response Time: < 600ms
+- Error Rate: < 1%
+- Throughput: > 10 requests/second
+
+---
+
+#### A.2 Raw Performance Data
+[Link to detailed performance results or embed the data]
+
+**File Location**: [Path to JMeter results files]
+
+### Appendix B: JMeter Reports
+
+#### B.1 HTML Dashboard Reports
+**Source Environment**: [Link or attachment]
+**Target Environment**: [Link or attachment]
+
+#### B.2 CSV Results Files
+**Authors API Tests**: [Link or attachment]
+**Books API Tests**: [Link or attachment]
+
+#### B.3 Performance Graphs
+- **Response Time Over Time**: [Link/Attachment]
+- **Throughput Graph**: [Link/Attachment]
+- **Active Threads Graph**: [Link/Attachment]
+
+### Appendix C: System Monitoring Logs
+
+#### C.1 CPU and Memory Logs
+[Include system resource monitoring data during tests]
+
+**File Location**: [Path to monitoring logs]
+
+#### C.2 Database Performance Logs
+[Include database performance metrics during load tests]
+
+### Appendix D: Test Artifacts
+
+#### D.1 JMeter Test Scripts
+- **Test Script Repository**: [Link to repository]
+- **Test Configuration Files**: [Link to config files]
+
+#### D.2 Test Data Files
+- **Author Test Data**: `author_data.csv`, `author_ids.csv`
+- **Book Test Data**: `book_create_data.csv`, `book_ids.csv`
+- **Delete Data**: `delete_author_ids.csv`, `delete_book_ids.csv`
+
+#### D.3 Profiling Scripts
+- **Python Profiling Script**: `run_with_profiling.py`
+- **Test Orchestration**: `run_all_jmeter_tests.py`
+
+### Appendix E: Environment Configuration Details
+
+#### E.1 Source Environment Configuration
+[Detailed configuration files or settings]
+
+#### E.2 Target Environment Configuration
+[Detailed configuration files or settings]
+
+### Appendix F: Additional Documentation
+
+#### F.1 Test Plan
+[Link to detailed test plan document]
+
+#### F.2 Test Cases Repository
+[Link to test case management system or repository]
+
+#### F.3 Related Reports
+- [Link to Functional Test Report]
+- [Link to Data Migration Report]
+- [Link to Database Performance Report]
+
+### Appendix G: Revision History
+
+| Version | Date | Author | Description |
+|---------|------|--------|-------------|
+| **[Version]** | [Date] | [Author] | [Description of changes] |
+| **[Version]** | [Date] | [Author] | [Description of changes] |
+| **[Version]** | [Date] | [Author] | [Description of changes] |
+
+---
+
+## Document Approval
+
+| Role | Name | Signature | Date |
+|------|------|-----------|------|
+| **Test Lead** | ___________________ | ___________________ | ___________________ |
+| **QA Manager** | ___________________ | ___________________ | ___________________ |
+| **Project Manager** | ___________________ | ___________________ | ___________________ |
+| **Technical Lead** | ___________________ | ___________________ | ___________________ |
+
+---
+
+**Confidentiality Notice:**  
+This document contains confidential information intended solely for the use of [Organization Name] [Project Name] project. Unauthorized distribution is prohibited.
+
+**End of Report**
 
 ---
 
