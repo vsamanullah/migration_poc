@@ -112,7 +112,7 @@ test.describe('Pet Management', () => {
     await expect(page.locator('body')).toContainText(birthOutput);
   });
 
-  test('@sanityTC003-02: Verify date format validation', async ({ page }) => {
+  test('@sanity TC003-02: Verify date format validation', async ({ page }) => {
     // Pre-req: Owner exists
     await createUniqueOwner(page);
 
