@@ -72,6 +72,33 @@ def check_application_running(base_url="http://10.134.77.66:8080/petclinic"):
     except:
         return False
 
+def update_csv_data_for_tests(env_name="target"):
+    """Update CSV files with current database data for JMeter tests"""
+    print_color("Updating CSV files with current database data...", Colors.CYAN)
+    
+    try:
+        import subprocess
+        update_csv_script = Path(__file__).parent / "update_csv_data.py"
+        
+        result = subprocess.run([
+            sys.executable,
+            str(update_csv_script),
+            env_name
+        ], capture_output=True, text=True, encoding='utf-8', errors='replace')
+        
+        if result.returncode == 0:
+            print_color("CSV files updated successfully", Colors.GREEN)
+            return True
+        else:
+            print_color(f"CSV update failed (return code: {result.returncode})", Colors.RED)
+            if result.stderr:
+                print(f"Error details: {result.stderr[:200]}...")  # Truncate long errors
+            return False
+            
+    except Exception as e:
+        print_color(f"Error updating CSV files: {e}", Colors.RED)
+        return False
+
 def reset_database_snapshot(env_name="target", snapshot_file=None):
     """Reset and load PetClinic database snapshot using populate_test_data.py"""
     import subprocess

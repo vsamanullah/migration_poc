@@ -47,7 +47,7 @@ def reset_test_data(env_name):
         sys.executable,
         str(test_data_script),
         '--env', env_name,
-        '--count', '10'
+        '--additional', '10'
     ]
     
     result = subprocess.run(cmd, cwd=test_data_script.parent)
@@ -56,7 +56,27 @@ def reset_test_data(env_name):
         print(f"WARNING: Test data reset failed, but continuing...")
         return False
     else:
-        print(f"✓ Test data populated successfully\n")
+        print(f"✓ Test data populated successfully")
+    
+    # Update CSV files with current data
+    print(f"\n{'='*70}")
+    print(f"Step 2: Updating CSV files with current data...")
+    print(f"{'='*70}")
+    
+    update_csv_script = Path(__file__).parent / "update_csv_data.py"
+    cmd = [
+        sys.executable,
+        str(update_csv_script),
+        env_name
+    ]
+    
+    result = subprocess.run(cmd)
+    
+    if result.returncode != 0:
+        print(f"WARNING: CSV update failed, tests may fail...")
+        return False
+    else:
+        print(f"✓ CSV files updated successfully\n")
     
     return True
 

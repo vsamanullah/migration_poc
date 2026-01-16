@@ -311,17 +311,37 @@ class PetClinicDataPopulator:
         first_names = ['John', 'Jane', 'Michael', 'Sarah', 'David', 'Emma', 'Robert', 'Lisa', 
                       'William', 'Mary', 'James', 'Patricia', 'Charles', 'Jennifer', 'Daniel',
                       'Christopher', 'Jessica', 'Matthew', 'Ashley', 'Andrew', 'Amanda', 'Joseph']
-        last_names = ['Smith', 'Johnson', 'Williams', 'Brown', 'Jones', 'Garcia', 'Miller', 
-                     'Davis', 'Rodriguez', 'Martinez', 'Hernandez', 'Lopez', 'Wilson', 'Anderson',
-                     'Taylor', 'Thomas', 'Moore', 'Jackson', 'Martin', 'Lee', 'Thompson']
+        
+        # Include last names from JMeter performance tests to ensure test data consistency
+        jmeter_test_names = ['Coleman', 'Estaban', 'Rodriquez', 'Black', 'Davis', 'Escobito', 
+                            'Franklin', 'McTavish', 'Schroeder']
+        
+        # Additional common names for variety
+        additional_names = ['Smith', 'Johnson', 'Williams', 'Brown', 'Jones', 'Garcia', 'Miller',
+                           'Martinez', 'Hernandez', 'Lopez', 'Wilson', 'Anderson', 'Taylor', 
+                           'Thomas', 'Moore', 'Jackson', 'Martin', 'Lee', 'Thompson']
+        
+        # Combine both lists, prioritizing JMeter test names
+        last_names = jmeter_test_names + additional_names
         cities = ['Madison', 'Sun Prairie', 'McFarland', 'Windsor', 'Monona', 'Waunakee', 
                  'Middleton', 'Verona', 'Fitchburg', 'Stoughton']
         
+        
         owner_ids = []
+        
+        # Ensure JMeter test names are created first when count is small
+        jmeter_names_to_use = min(count, len(jmeter_test_names))
         
         for i in range(count):
             first_name = random.choice(first_names)
-            last_name = random.choice(last_names)
+            
+            # For the first few owners, use JMeter test names to ensure they exist
+            if i < jmeter_names_to_use:
+                last_name = jmeter_test_names[i]
+                logger.info(f"    Creating owner with JMeter test name: {first_name} {last_name}")
+            else:
+                last_name = random.choice(last_names)
+                
             address = f"{random.randint(100, 9999)} {random.choice(['Oak', 'Maple', 'Pine', 'Cedar', 'Elm'])} {random.choice(['St.', 'Ave.', 'Blvd.', 'Rd.', 'Lane'])}"
             city = random.choice(cities)
             telephone = f"608555{random.randint(1000, 9999)}"
