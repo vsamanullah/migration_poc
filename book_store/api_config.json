@@ -1,10 +1,10 @@
 {
   "environments": {
     "source": {
-      "base_url": "https://10.8.196.6",
-      "protocol": "https",
-      "host": "10.8.196.6",
-      "port": 443,
+      "base_url": "http://bookstore-legacy.ucgpoc.com:8080/",
+      "protocol": "http",
+      "host": "bookstore-legacy.ucgpoc.com",
+      "port": 8080,
       "api_prefix": "/api",
       "verify_ssl": false,
       "timeout": 30,
