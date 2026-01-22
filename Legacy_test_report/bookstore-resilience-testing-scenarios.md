@@ -1,9 +1,9 @@
 # BookStore Application - Simple Resilience Test Cases
 
 ## Test Environment
-- **Application**: `bookstore-legacy.ucgpoc.com:8080`
-- **Primary Database**: SQL Server `10.8.196.7:1433`
-- **Backup Database**: `bookstore-replica.cloud.com:1433`
+- **Application**: Book Store <URL>
+- **Primary Database**: SQL Server <IP Address>
+- **Backup Database**: <IP Address>
 
 ## RPO/RTO Targets
 - **Database Recovery**: RPO ≤ 1 minute, RTO ≤ 10 minutes
@@ -18,10 +18,10 @@
 **Purpose**: Test if BookStore app switches to backup database when primary fails
 
 **Steps**:
-1. Open BookStore app: `http://bookstore-legacy.ucgpoc.com:8080`
+1. Open BookStore app: <URL>
 2. Add a new author: "Test Author" with email "test@example.com"
 3. Add a new book: "Test Book" by the author
-4. Stop primary SQL Server: `10.8.196.7:1433`
+4. Stop primary SQL Server: <IP>
 5. Try to add another author: "Test Author 2"
 6. Check if app automatically connects to backup database
 7. Verify both authors and books are saved

@@ -1,9 +1,9 @@
 # PetClinic Application - Simple Resilience Test Cases
 
 ## Test Environment
-- **Application**: `petclinic-legacy.ucgpoc.com:8080/petclinic`
-- **Primary Database**: `10.106.54.5:5432`
-- **Backup Database**: `petclinic-replica.cloud.com:5432`
+- **Application**: <URL>
+- **Primary Database**: <IP>
+- **Backup Database**: <IP>
 
 ## RPO/RTO Targets
 - **Database Recovery**: RPO ≤ 2 minutes, RTO ≤ 15 minutes
@@ -18,9 +18,9 @@
 **Purpose**: Test if application switches to backup database when primary fails
 
 **Steps**:
-1. Open PetClinic app: `http://petclinic-legacy.ucgpoc.com:8080/petclinic`
+1. Open PetClinic app: <URL>
 2. Add a new owner: "Test Owner" with phone "123-456-7890"
-3. Stop primary database server: `10.106.54.5:5432`
+3. Stop primary database server: <IP>
 4. Try to add another owner: "Test Owner 2" 
 5. Check if app automatically connects to backup database
 6. Verify both owners are saved
