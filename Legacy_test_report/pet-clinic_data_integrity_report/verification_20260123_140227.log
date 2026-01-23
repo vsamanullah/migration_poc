@@ -1,0 +1,136 @@
+2026-01-23 14:02:27,376 - INFO - 
+======================================================================
+2026-01-23 14:02:27,377 - INFO - PETCLINIC DATABASE MIGRATION VERIFIER
+2026-01-23 14:02:27,377 - INFO - ======================================================================
+2026-01-23 14:02:27,378 - INFO - Environment: dev
+2026-01-23 14:02:27,378 - INFO - Database: petclinic
+2026-01-23 14:02:27,378 - INFO - Host: 10.8.1.25
+2026-01-23 14:02:27,378 - INFO - Baseline file: baseline_source_20260119_114151.json
+2026-01-23 14:02:27,379 - INFO - ======================================================================
+2026-01-23 14:02:27,412 - INFO - ✓ Loaded baseline from: baseline_source_20260119_114151.json
+2026-01-23 14:02:27,412 - INFO -   Baseline timestamp: 20260119_114151
+2026-01-23 14:02:27,413 - INFO - 
+======================================================================
+2026-01-23 14:02:27,413 - INFO - CAPTURING CURRENT DATABASE STATE
+2026-01-23 14:02:27,413 - INFO - ======================================================================
+2026-01-23 14:02:27,466 - INFO - Processing 18 tables...
+
+2026-01-23 14:02:27,466 - INFO - • Processing petclinic.owners...
+2026-01-23 14:02:27,502 - INFO - • Processing petclinic.pets...
+2026-01-23 14:02:27,537 - INFO - • Processing petclinic.specialties...
+2026-01-23 14:02:27,547 - INFO - • Processing petclinic.types...
+2026-01-23 14:02:27,556 - INFO - • Processing petclinic.vet_specialties...
+2026-01-23 14:02:27,564 - INFO - • Processing petclinic.vets...
+2026-01-23 14:02:27,578 - INFO - • Processing petclinic.visits...
+2026-01-23 14:02:27,614 - INFO - • Processing pglogical.depend...
+2026-01-23 14:02:27,623 - INFO - • Processing pglogical.local_node...
+2026-01-23 14:02:27,633 - INFO - • Processing pglogical.local_sync_status...
+2026-01-23 14:02:27,642 - INFO - • Processing pglogical.node...
+2026-01-23 14:02:27,652 - INFO - • Processing pglogical.node_interface...
+2026-01-23 14:02:27,663 - INFO - • Processing pglogical.queue...
+2026-01-23 14:02:27,673 - INFO - • Processing pglogical.replication_set...
+2026-01-23 14:02:27,684 - INFO - • Processing pglogical.replication_set_seq...
+2026-01-23 14:02:27,694 - INFO - • Processing pglogical.replication_set_table...
+2026-01-23 14:02:27,704 - INFO - • Processing pglogical.sequence_state...
+2026-01-23 14:02:27,714 - INFO - • Processing pglogical.subscription...
+2026-01-23 14:02:27,726 - INFO - 
+✓ Current state captured successfully
+2026-01-23 14:02:27,727 - INFO - 
+======================================================================
+2026-01-23 14:02:27,730 - INFO - MIGRATION VERIFICATION - COMPARING BASELINE VS CURRENT
+2026-01-23 14:02:27,730 - INFO - ======================================================================
+2026-01-23 14:02:27,731 - INFO - Baseline:  20260119_114151
+2026-01-23 14:02:27,732 - INFO - Current:   20260123_140227
+2026-01-23 14:02:27,732 - INFO - ======================================================================
+
+2026-01-23 14:02:27,733 - INFO - ──────────────────────────────────────────────────────────────────────
+2026-01-23 14:02:27,734 - INFO - TABLE EXISTENCE VERIFICATION
+2026-01-23 14:02:27,734 - INFO - ──────────────────────────────────────────────────────────────────────
+2026-01-23 14:02:27,734 - INFO - ✓ Table Existence: PASSED - All tables preserved
+2026-01-23 14:02:27,735 - INFO - 
+──────────────────────────────────────────────────────────────────────
+2026-01-23 14:02:27,735 - INFO - ROW COUNT VERIFICATION
+2026-01-23 14:02:27,736 - INFO - ──────────────────────────────────────────────────────────────────────
+2026-01-23 14:02:27,736 - WARNING - ⚠ Row Count - petclinic.owners: WARNING - 1000 → 1035 (+35 rows)
+2026-01-23 14:02:27,736 - WARNING - ⚠ Row Count - petclinic.pets: WARNING - 2054 → 2061 (+7 rows)
+2026-01-23 14:02:27,737 - INFO - ✓ Row Count - petclinic.specialties: PASSED - 0 rows (unchanged)
+2026-01-23 14:02:27,737 - INFO - ✓ Row Count - petclinic.types: PASSED - 4 rows (unchanged)
+2026-01-23 14:02:27,737 - INFO - ✓ Row Count - petclinic.vet_specialties: PASSED - 0 rows (unchanged)
+2026-01-23 14:02:27,738 - WARNING - ⚠ Row Count - petclinic.vets: WARNING - 333 → 334 (+1 rows)
+2026-01-23 14:02:27,738 - INFO - ✓ Row Count - petclinic.visits: PASSED - 1979 rows (unchanged)
+2026-01-23 14:02:27,738 - INFO - ✓ Row Count - pglogical.depend: PASSED - 0 rows (unchanged)
+2026-01-23 14:02:27,739 - WARNING - ⚠ Row Count - pglogical.local_node: WARNING - 0 → 1 (+1 rows)
+2026-01-23 14:02:27,739 - WARNING - ⚠ Row Count - pglogical.local_sync_status: WARNING - 0 → 9 (+9 rows)
+2026-01-23 14:02:27,739 - WARNING - ⚠ Row Count - pglogical.node: WARNING - 0 → 2 (+2 rows)
+2026-01-23 14:02:27,740 - WARNING - ⚠ Row Count - pglogical.node_interface: WARNING - 0 → 2 (+2 rows)
+2026-01-23 14:02:27,740 - WARNING - ⚠ Row Count - pglogical.queue: WARNING - 0 → 6 (+6 rows)
+2026-01-23 14:02:27,740 - WARNING - ⚠ Row Count - pglogical.replication_set: WARNING - 0 → 3 (+3 rows)
+2026-01-23 14:02:27,741 - INFO - ✓ Row Count - pglogical.replication_set_seq: PASSED - 0 rows (unchanged)
+2026-01-23 14:02:27,741 - INFO - ✓ Row Count - pglogical.replication_set_table: PASSED - 0 rows (unchanged)
+2026-01-23 14:02:27,741 - INFO - ✓ Row Count - pglogical.sequence_state: PASSED - 0 rows (unchanged)
+2026-01-23 14:02:27,742 - WARNING - ⚠ Row Count - pglogical.subscription: WARNING - 0 → 2 (+2 rows)
+2026-01-23 14:02:27,742 - INFO - 
+──────────────────────────────────────────────────────────────────────
+2026-01-23 14:02:27,742 - INFO - DATA INTEGRITY CHECKSUMS
+2026-01-23 14:02:27,743 - INFO - ──────────────────────────────────────────────────────────────────────
+2026-01-23 14:02:27,743 - WARNING - ⚠ Checksum - petclinic.owners: WARNING - Data modified (row count changed)
+2026-01-23 14:02:27,743 - WARNING - ⚠ Checksum - petclinic.pets: WARNING - Data modified (row count changed)
+2026-01-23 14:02:27,744 - INFO - ✓ Checksum - petclinic.specialties: PASSED - Data unchanged
+2026-01-23 14:02:27,744 - INFO - ✓ Checksum - petclinic.types: PASSED - Data unchanged
+2026-01-23 14:02:27,744 - INFO - ✓ Checksum - petclinic.vet_specialties: PASSED - Data unchanged
+2026-01-23 14:02:27,745 - WARNING - ⚠ Checksum - petclinic.vets: WARNING - Data modified (row count changed)
+2026-01-23 14:02:27,745 - INFO - ✓ Checksum - petclinic.visits: PASSED - Data unchanged
+2026-01-23 14:02:27,745 - INFO - ✓ Checksum - pglogical.depend: PASSED - Data unchanged
+2026-01-23 14:02:27,745 - WARNING - ⚠ Checksum - pglogical.local_node: WARNING - Data modified (row count changed)
+2026-01-23 14:02:27,746 - WARNING - ⚠ Checksum - pglogical.local_sync_status: WARNING - Data modified (row count changed)
+2026-01-23 14:02:27,746 - WARNING - ⚠ Checksum - pglogical.node: WARNING - Data modified (row count changed)
+2026-01-23 14:02:27,746 - WARNING - ⚠ Checksum - pglogical.node_interface: WARNING - Data modified (row count changed)
+2026-01-23 14:02:27,747 - WARNING - ⚠ Checksum - pglogical.queue: WARNING - Data modified (row count changed)
+2026-01-23 14:02:27,747 - WARNING - ⚠ Checksum - pglogical.replication_set: WARNING - Data modified (row count changed)
+2026-01-23 14:02:27,747 - INFO - ✓ Checksum - pglogical.replication_set_seq: PASSED - Data unchanged
+2026-01-23 14:02:27,748 - INFO - ✓ Checksum - pglogical.replication_set_table: PASSED - Data unchanged
+2026-01-23 14:02:27,748 - INFO - ✓ Checksum - pglogical.sequence_state: PASSED - Data unchanged
+2026-01-23 14:02:27,749 - WARNING - ⚠ Checksum - pglogical.subscription: WARNING - Data modified (row count changed)
+2026-01-23 14:02:27,749 - INFO - 
+──────────────────────────────────────────────────────────────────────
+2026-01-23 14:02:27,749 - INFO - SCHEMA VERIFICATION
+2026-01-23 14:02:27,750 - INFO - ──────────────────────────────────────────────────────────────────────
+2026-01-23 14:02:27,750 - INFO - ✓ Schema - petclinic.owners: PASSED - Schema unchanged
+2026-01-23 14:02:27,750 - INFO - ✓ Schema - petclinic.pets: PASSED - Schema unchanged
+2026-01-23 14:02:27,751 - INFO - ✓ Schema - petclinic.specialties: PASSED - Schema unchanged
+2026-01-23 14:02:27,751 - INFO - ✓ Schema - petclinic.types: PASSED - Schema unchanged
+2026-01-23 14:02:27,751 - INFO - ✓ Schema - petclinic.vet_specialties: PASSED - Schema unchanged
+2026-01-23 14:02:27,752 - INFO - ✓ Schema - petclinic.vets: PASSED - Schema unchanged
+2026-01-23 14:02:27,752 - INFO - ✓ Schema - petclinic.visits: PASSED - Schema unchanged
+2026-01-23 14:02:27,752 - INFO - ✓ Schema - pglogical.depend: PASSED - Schema unchanged
+2026-01-23 14:02:27,753 - INFO - ✓ Schema - pglogical.local_node: PASSED - Schema unchanged
+2026-01-23 14:02:27,753 - INFO - ✓ Schema - pglogical.local_sync_status: PASSED - Schema unchanged
+2026-01-23 14:02:27,753 - INFO - ✓ Schema - pglogical.node: PASSED - Schema unchanged
+2026-01-23 14:02:27,753 - INFO - ✓ Schema - pglogical.node_interface: PASSED - Schema unchanged
+2026-01-23 14:02:27,754 - INFO - ✓ Schema - pglogical.queue: PASSED - Schema unchanged
+2026-01-23 14:02:27,754 - INFO - ✓ Schema - pglogical.replication_set: PASSED - Schema unchanged
+2026-01-23 14:02:27,754 - INFO - ✓ Schema - pglogical.replication_set_seq: PASSED - Schema unchanged
+2026-01-23 14:02:27,755 - INFO - ✓ Schema - pglogical.replication_set_table: PASSED - Schema unchanged
+2026-01-23 14:02:27,755 - INFO - ✓ Schema - pglogical.sequence_state: PASSED - Schema unchanged
+2026-01-23 14:02:27,755 - INFO - ✓ Schema - pglogical.subscription: PASSED - Schema unchanged
+2026-01-23 14:02:27,756 - INFO - 
+──────────────────────────────────────────────────────────────────────
+2026-01-23 14:02:27,756 - INFO - REFERENTIAL INTEGRITY VERIFICATION
+2026-01-23 14:02:27,756 - INFO - ──────────────────────────────────────────────────────────────────────
+2026-01-23 14:02:27,789 - INFO - ✓ Referential Integrity - pets.type_id: PASSED - No orphaned records
+2026-01-23 14:02:27,792 - INFO - ✓ Referential Integrity - pets.owner_id: PASSED - No orphaned records
+2026-01-23 14:02:27,795 - INFO - ✓ Referential Integrity - visits.pet_id: PASSED - No orphaned records
+2026-01-23 14:02:27,797 - INFO - ✓ Referential Integrity - vet_specialties.vet_id: PASSED - No orphaned records
+2026-01-23 14:02:27,799 - INFO - ✓ Referential Integrity - vet_specialties.specialty_id: PASSED - No orphaned records
+2026-01-23 14:02:27,799 - INFO - 
+======================================================================
+2026-01-23 14:02:27,800 - INFO - MIGRATION VERIFICATION SUMMARY
+2026-01-23 14:02:27,800 - INFO - ======================================================================
+2026-01-23 14:02:27,801 - INFO - ✓ Tests Passed:  40
+2026-01-23 14:02:27,802 - INFO - ⚠ Warnings:      20
+2026-01-23 14:02:27,803 - INFO - ✗ Tests Failed:  0
+2026-01-23 14:02:27,803 - INFO - ======================================================================
+2026-01-23 14:02:27,804 - INFO - 
+======================================================================
+2026-01-23 14:02:27,804 - INFO - ⚠ MIGRATION VERIFIED WITH WARNINGS
+2026-01-23 14:02:27,805 - INFO - ======================================================================

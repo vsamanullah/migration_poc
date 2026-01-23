@@ -1,0 +1,98 @@
+2026-01-22 07:30:05,793 - INFO -  Loaded baseline from: .\baseline_source_20260119_113557.json
+2026-01-22 07:30:05,796 - INFO -   Baseline timestamp: 20260119_113557
+2026-01-22 07:30:05,797 - INFO - 
+======================================================================
+2026-01-22 07:30:05,797 - INFO - CAPTURING CURRENT DATABASE STATE
+2026-01-22 07:30:05,798 - INFO - ======================================================================
+2026-01-22 07:30:06,000 - INFO - Processing 5 tables...
+
+2026-01-22 07:30:06,001 - INFO -  Processing dbo.Authors...
+2026-01-22 07:30:06,318 - INFO -  Processing dbo.Books...
+2026-01-22 07:30:06,624 - INFO -  Processing dbo.Countries...
+2026-01-22 07:30:06,869 - INFO -  Processing dbo.Customers...
+2026-01-22 07:30:06,971 - INFO -  Processing dbo.__MigrationHistory...
+2026-01-22 07:30:07,224 - INFO - 
+ Current state captured successfully
+2026-01-22 07:30:07,230 - INFO - 
+======================================================================
+2026-01-22 07:30:07,231 - INFO - MIGRATION VERIFICATION - COMPARING BASELINE VS CURRENT
+2026-01-22 07:30:07,231 - INFO - ======================================================================
+2026-01-22 07:30:07,232 - INFO - Baseline:  20260119_113557
+2026-01-22 07:30:07,232 - INFO - Current:   20260122_073005
+2026-01-22 07:30:07,233 - INFO - ======================================================================
+
+2026-01-22 07:30:07,233 - INFO - ──────────────────────────────────────────────────────────────────────
+2026-01-22 07:30:07,234 - INFO - TABLE EXISTENCE VERIFICATION
+2026-01-22 07:30:07,234 - INFO - ──────────────────────────────────────────────────────────────────────
+2026-01-22 07:30:07,235 - INFO -  Table Existence: PASSED - All tables preserved
+2026-01-22 07:30:07,235 - INFO - 
+──────────────────────────────────────────────────────────────────────
+2026-01-22 07:30:07,236 - INFO - ROW COUNT VERIFICATION
+2026-01-22 07:30:07,236 - INFO - ──────────────────────────────────────────────────────────────────────
+2026-01-22 07:30:07,237 - WARNING -  Row Count - dbo.Authors: WARNING - 1000 → 1002 (+2 rows)
+2026-01-22 07:30:07,237 - WARNING -  Row Count - dbo.Books: WARNING - 2000 → 2003 (+3 rows)
+2026-01-22 07:30:07,238 - INFO -  Row Count - dbo.Countries: PASSED - 0 rows (unchanged)
+2026-01-22 07:30:07,238 - INFO -  Row Count - dbo.Customers: PASSED - 1000 rows (unchanged)
+2026-01-22 07:30:07,239 - INFO -  Row Count - dbo.__MigrationHistory: PASSED - 3 rows (unchanged)
+2026-01-22 07:30:07,239 - INFO - 
+──────────────────────────────────────────────────────────────────────
+2026-01-22 07:30:07,240 - INFO - DATA INTEGRITY CHECKSUMS
+2026-01-22 07:30:07,240 - INFO - ──────────────────────────────────────────────────────────────────────
+2026-01-22 07:30:07,240 - WARNING -  Checksum - dbo.Authors: WARNING - Data modified (row count changed)
+2026-01-22 07:30:07,242 - WARNING -  Checksum - dbo.Books: WARNING - Data modified (row count changed)
+2026-01-22 07:30:07,242 - INFO -  Checksum - dbo.Countries: PASSED - Data unchanged
+2026-01-22 07:30:07,242 - INFO -  Checksum - dbo.Customers: PASSED - Data unchanged
+2026-01-22 07:30:07,243 - INFO -  Checksum - dbo.__MigrationHistory: PASSED - Data unchanged
+2026-01-22 07:30:07,243 - INFO - 
+──────────────────────────────────────────────────────────────────────
+2026-01-22 07:30:07,243 - INFO - SCHEMA VERIFICATION
+2026-01-22 07:30:07,244 - INFO - ──────────────────────────────────────────────────────────────────────
+2026-01-22 07:30:07,244 - INFO -  Schema - dbo.Authors: PASSED - Schema unchanged
+2026-01-22 07:30:07,245 - INFO -  Schema - dbo.Books: PASSED - Schema unchanged
+2026-01-22 07:30:07,245 - INFO -  Schema - dbo.Countries: PASSED - Schema unchanged
+2026-01-22 07:30:07,245 - INFO -  Schema - dbo.Customers: PASSED - Schema unchanged
+2026-01-22 07:30:07,246 - INFO -  Schema - dbo.__MigrationHistory: PASSED - Schema unchanged
+2026-01-22 07:30:07,246 - INFO - 
+──────────────────────────────────────────────────────────────────────
+2026-01-22 07:30:07,246 - INFO - FOREIGN KEY VERIFICATION
+2026-01-22 07:30:07,247 - INFO - ──────────────────────────────────────────────────────────────────────
+2026-01-22 07:30:07,247 - INFO -  Foreign Keys - dbo.Books: PASSED - 1 FK(s) unchanged
+2026-01-22 07:30:07,248 - INFO - 
+──────────────────────────────────────────────────────────────────────
+2026-01-22 07:30:07,248 - INFO - INDEX VERIFICATION
+2026-01-22 07:30:07,248 - INFO - ──────────────────────────────────────────────────────────────────────
+2026-01-22 07:30:07,249 - INFO -  Indexes - dbo.Authors: PASSED - 1 index(es) unchanged
+2026-01-22 07:30:07,249 - INFO -  Indexes - dbo.Books: PASSED - 2 index(es) unchanged
+2026-01-22 07:30:07,250 - INFO -  Indexes - dbo.Countries: PASSED - 1 index(es) unchanged
+2026-01-22 07:30:07,250 - INFO -  Indexes - dbo.Customers: PASSED - 1 index(es) unchanged
+2026-01-22 07:30:07,250 - INFO -  Indexes - dbo.__MigrationHistory: PASSED - 1 index(es) unchanged
+2026-01-22 07:30:07,251 - INFO - 
+──────────────────────────────────────────────────────────────────────
+2026-01-22 07:30:07,251 - INFO - REFERENTIAL INTEGRITY VERIFICATION
+2026-01-22 07:30:07,251 - INFO - ──────────────────────────────────────────────────────────────────────
+2026-01-22 07:30:07,281 - INFO -  FK Integrity - dbo.Books.AuthorId: PASSED - No orphaned records
+2026-01-22 07:30:07,290 - INFO - 
+======================================================================
+2026-01-22 07:30:07,292 - INFO - MIGRATION VERIFICATION REPORT
+2026-01-22 07:30:07,293 - INFO - ======================================================================
+2026-01-22 07:30:07,294 - INFO - 
+Database Information:
+2026-01-22 07:30:07,295 - INFO -   Server:         10.8.138.3,1433
+2026-01-22 07:30:07,295 - INFO -   Database:       BookService-Master
+2026-01-22 07:30:07,296 - INFO -   Driver:         ODBC Driver 18 for SQL Server
+2026-01-22 07:30:07,296 - INFO -   Authentication: SQL Authentication (User: testuser)
+2026-01-22 07:30:07,297 - INFO - 
+Baseline Database Information:
+2026-01-22 07:30:07,298 - INFO -   Server:         10.8.196.7,1433
+2026-01-22 07:30:07,299 - INFO -   Database:       BookService-Master
+2026-01-22 07:30:07,325 - INFO - 
+Baseline:     20260119_113557
+2026-01-22 07:30:07,328 - INFO - Verified:     20260122_073005
+2026-01-22 07:30:07,328 - INFO - 
+Total Tests:  23
+2026-01-22 07:30:07,338 - INFO -  Passed:     19
+2026-01-22 07:30:07,339 - INFO -  Warnings:   4
+2026-01-22 07:30:07,359 - INFO -  Failed:     0
+2026-01-22 07:30:07,361 - INFO - ======================================================================
+2026-01-22 07:30:07,362 - INFO - 
+ Success Rate: 100.0%
